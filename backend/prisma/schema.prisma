@@ -1,0 +1,66 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "mysql"
+}
+
+
+
+
+
+
+
+
+
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  role      String
+  salonId   Int?
+  salon     Salon?   @relation(fields: [salonId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model Salon {
+  id           Int       @id @default(autoincrement())
+  salonName    String
+  ownerName    String
+  address      String
+  phone        String
+  isOpen       Boolean   @default(true)
+  currentToken Int       @default(0)
+
+  users        User[]
+  services     Service[]
+  queues       Queue[]
+}
+
+model Service {
+  id        Int      @id @default(autoincrement())
+  salonId   Int
+  name      String
+  duration  Int
+  price     Float?
+
+  salon     Salon    @relation(fields: [salonId], references: [id])
+  queues    Queue[]
+}
+
+model Queue {
+  id                 Int       @id @default(autoincrement())
+  salonId            Int
+  customerName       String
+  tokenNumber        Int
+  status             String
+  serviceId          Int
+  joinedAt           DateTime  @default(now())
+  estimatedStartTime DateTime?
+
+  salon              Salon     @relation(fields: [salonId], references: [id])
+  service            Service   @relation(fields: [serviceId], references: [id])
+}
