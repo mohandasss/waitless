@@ -1,14 +1,30 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
-export function LoginFooter() {
+interface LoginFooterProps {
+  isSignup: boolean;
+  onToggle: () => void;
+}
+
+export function LoginFooter({ isSignup, onToggle }: LoginFooterProps) {
   const { t, i18n } = useTranslation();
 
   return (
     <footer className="flex-shrink-0 flex flex-col items-center gap-md border-t border-surface-variant pt-md pb-md bg-surface-container-lowest">
-      <a className="font-body-cta text-body-cta text-on-surface" href="#">
-        {t("login.newHere")} <span className="text-primary">{t("login.createAccount")}</span>
-      </a>
+      <button 
+        className="font-body-cta text-body-cta text-on-surface hover:text-primary transition-colors"
+        onClick={onToggle}
+      >
+        {isSignup ? (
+          <>
+            {t("login.alreadyHaveAccount")} <span className="text-primary">{t("login.login")}</span>
+          </>
+        ) : (
+          <>
+            {t("login.newHere")} <span className="text-primary">{t("login.createAccount")}</span>
+          </>
+        )}
+      </button>
       <div className="font-meta-label text-meta-label text-on-surface-variant flex gap-unit">
         <Button 
           variant="ghost" 

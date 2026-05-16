@@ -1,7 +1,9 @@
 {
   "login": {
     "newHere": "नए हैं?",
-    "createAccount": "सैलून अकाउंट बनाएं"
+    "createAccount": "सैलून अकाउंट बनाएं",
+    "alreadyHaveAccount": "पहले से ही एक खाता है?",
+    "login": "लॉगिन"
   },
   "dashboard": {
     "quickActions": "त्वरित कार्रवाई",

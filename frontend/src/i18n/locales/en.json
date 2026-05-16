@@ -1,7 +1,9 @@
 {
   "login": {
     "newHere": "New here?",
-    "createAccount": "Create Salon Account"
+    "createAccount": "Create Salon Account",
+    "alreadyHaveAccount": "Already have an account?",
+    "login": "Login"
   },
   "dashboard": {
     "quickActions": "Quick Actions",
