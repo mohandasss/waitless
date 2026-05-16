@@ -1,0 +1,13 @@
+{
+  "login": {
+    "newHere": "New here?",
+    "createAccount": "Create Salon Account"
+  },
+  "dashboard": {
+    "quickActions": "Quick Actions",
+    "next": "Next",
+    "walkIn": "Walk-In",
+    "done": "Done",
+    "skip": "Skip"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "login": {
+    "newHere": "नए हैं?",
+    "createAccount": "सैलून अकाउंट बनाएं"
+  },
+  "dashboard": {
+    "quickActions": "त्वरित कार्रवाई",
+    "next": "अगला",
+    "walkIn": "वॉक-इन",
+    "done": "हो गया",
+    "skip": "छोड़ें"
+  }
+}
