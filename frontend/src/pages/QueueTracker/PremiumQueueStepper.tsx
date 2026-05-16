@@ -1,15 +1,20 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Check } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 type QueueStepperProps = {
   currentServing?: number;
   yourNumber?: number;
+  onNotifyToggle?: () => void;
+  onLeaveQueue?: () => void;
 };
 
 export default function PremiumQueueStepper({
   currentServing = 15,
   yourNumber = 18,
+  onNotifyToggle,
+  onLeaveQueue,
 }: QueueStepperProps) {
   const steps = Array.from(
     { length: yourNumber - currentServing + 1 },
@@ -32,7 +37,7 @@ export default function PremiumQueueStepper({
           <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">
             Serving
           </span>
-          <span className="text-lg font-bold text-emerald-500 leading-none mt-1">
+          <span className="text-lg font-bold text-tertiary leading-none mt-1">
             #{currentServing}
           </span>
         </div>
@@ -47,7 +52,7 @@ export default function PremiumQueueStepper({
             initial={{ width: 0 }}
             animate={{ width: "100%" }}
             transition={{ duration: 1.5, ease: "easeOut" }}
-            className="absolute top-0 left-4 h-full bg-gradient-to-r from-emerald-400 to-rose-400 rounded-full"
+            className="absolute top-0 left-4 h-full bg-gradient-to-r from-tertiary to-primary rounded-full"
             style={{ maxWidth: "calc(100% - 2rem)" }}
           />
         </div>
@@ -80,28 +85,28 @@ export default function PremiumQueueStepper({
                     flex items-center justify-center rounded-full text-xs font-semibold transition-all
                     ${
                       isServing
-                        ? "w-8 h-8 bg-emerald-500 text-white shadow-sm shadow-emerald-200 border-2 border-white ring-1 ring-emerald-100"
-                        : isYou
-                        ? "w-9 h-9 bg-rose-500 text-white shadow-sm shadow-rose-200 border-2 border-white ring-2 ring-rose-100"
-                        : "w-6 h-6 bg-white text-zinc-400 border-2 border-zinc-100"
-                    }
-                  `}
-                >
-                  {step}
-                </motion.div>
+                      ? "w-8 h-8 bg-tertiary text-white shadow-sm border-2 border-white ring-1 ring-tertiary/20"
+                      : isYou
+                      ? "w-9 h-9 bg-primary text-white shadow-sm border-2 border-white ring-2 ring-primary/20"
+                      : "w-6 h-6 bg-white text-zinc-400 border-2 border-zinc-100"
+                  }
+                `}
+              >
+                {step}
+              </motion.div>
 
-                {/* Labels */}
-                <div className="absolute -bottom-5 w-16 text-center">
-                  {isServing && (
-                    <p className="text-[9px] font-bold text-emerald-600 tracking-wider">
-                      NOW
-                    </p>
-                  )}
-                  {isYou && (
-                    <p className="text-[9px] font-bold text-rose-600 tracking-wider">
-                      YOU
-                    </p>
-                  )}
+              {/* Labels */}
+              <div className="absolute -bottom-5 w-16 text-center">
+                {isServing && (
+                  <p className="text-[9px] font-bold text-tertiary tracking-wider">
+                    NOW
+                  </p>
+                )}
+                {isYou && (
+                  <p className="text-[9px] font-bold text-primary tracking-wider">
+                    YOU
+                  </p>
+                )}
                 </div>
               </motion.div>
             );
@@ -123,11 +128,29 @@ export default function PremiumQueueStepper({
           <p className="text-sm font-semibold text-zinc-900 mt-0.5">~9 mins</p>
         </div>
 
-        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-100/50 text-emerald-600 text-xs font-medium">
+        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-tertiary/10 text-tertiary text-xs font-medium">
           <Check className="w-3.5 h-3.5" />
           Live
         </div>
       </motion.div>
+
+      {/* Action Buttons */}
+      <div className="mt-5 flex flex-col gap-2">
+        <Button
+          onClick={onNotifyToggle}
+          className="w-full bg-primary !text-white hover:bg-primary-container font-body-cta text-body-cta py-3 px-lg rounded-full shadow-sm transition-all flex justify-center items-center gap-2 h-auto"
+        >
+          <span className="material-symbols-outlined">notifications_active</span>
+          Notify Me Near Turn
+        </Button>
+        <Button
+          onClick={onLeaveQueue}
+          variant="ghost"
+          className="w-full bg-transparent text-zinc-500 hover:text-zinc-900 font-body-cta text-body-cta py-2 transition-colors text-center border border-transparent hover:border-zinc-100 rounded-full h-auto"
+        >
+          Leave Queue
+        </Button>
+      </div>
     </div>
   );
 }

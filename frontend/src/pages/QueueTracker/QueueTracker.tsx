@@ -69,35 +69,29 @@ export const QueueTracker: React.FC<QueueTrackerProps> = ({
   const bestToReachMins = Math.max(0, estimatedWaitMins - 12);
 
   return (
-    <div className="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-32">
+    <div className="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-20">
       <QueueHeader onBack={onBack} />
 
       <main className="flex-1 px-container-padding pt-md pb-xl flex flex-col gap-xl max-w-md mx-auto w-full">
-        <QueueHeroCard 
+        <QueueHeroCard
           tokenNumber={tokenNumber}
           estimatedWaitMins={estimatedWaitMins}
           currentlyServing={currentlyServing}
           aheadOfYou={aheadOfYou}
           joinedAt={joinedAt}
+          visitDetails={visitDetails}
         />
 
         <section className="flex flex-col gap-md">
-          <PremiumQueueStepper currentServing={currentlyServing} yourNumber={tokenNumber} />
+          <PremiumQueueStepper 
+            currentServing={currentlyServing} 
+            yourNumber={tokenNumber} 
+            onNotifyToggle={onNotifyToggle}
+            onLeaveQueue={onLeaveQueue}
+          />
         </section>
 
-        <SmartArrivalCard bestToReachMins={bestToReachMins} />
 
-        <VisitDetailsCard 
-          service={service}
-          duration={duration}
-          location={location}
-          isPeakRush={isPeakRush}
-        />
-
-        <QueueActions 
-          onNotifyToggle={onNotifyToggle}
-          onLeaveQueue={onLeaveQueue}
-        />
       </main>
 
       <QueueBottomNav onBack={onBack} />

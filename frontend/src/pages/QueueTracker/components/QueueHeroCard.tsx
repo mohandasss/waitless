@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import { motion } from 'framer-motion';
+import React, { useMemo, useState, useEffect, useRef } from 'react';
+import { motion, animate } from 'framer-motion';
 
 interface QueueHeroCardProps {
   tokenNumber: number;
@@ -7,59 +7,44 @@ interface QueueHeroCardProps {
   currentlyServing: number;
   aheadOfYou: number;
   joinedAt: string;
+  visitDetails: {
+    service: string;
+    duration: string;
+    location: string;
+    isPeakRush: boolean;
+  };
 }
 
 interface ParticleConfig {
   id: number;
   initialX: number;
   initialY: number;
-  animateKeyframes: {
-    x: number[];
-    y: number[];
-    opacity: number[];
-    scale: number[];
-  };
+  animateKeyframes: { x: number[]; y: number[]; opacity: number[]; scale: number[] };
   duration: number;
   delay: number;
   color: string;
 }
 
-// Function to generate randomized particle configurations
 const generateParticlesConfig = (count: number): ParticleConfig[] => {
-  const particles: ParticleConfig[] = [];
   const colors = [
-    'rgba(147, 51, 234, 0.4)', // Using a color related to primary/purple
-    'rgba(59, 130, 246, 0.3)', // Related to blue-400
-    'rgba(16, 185, 129, 0.3)', // Related to emerald-400
+    'rgba(99, 102, 241, 0.35)',
+    'rgba(56, 189, 248, 0.35)',
+    'rgba(45, 212, 191, 0.25)',
   ];
-
-  for (let i = 0; i < count; i++) {
-    // Randomized movement ranges within the card's bounds (approx max-w-sm and reasonable height)
-    // Adjust values based on the component's actual width and height
-    const xMovementRange = 250;
-    const yMovementRange = 350;
-
-    particles.push({
-      id: i,
-      // Initial position randomized
-      initialX: Math.random() * (xMovementRange / 2) - xMovementRange / 4,
-      initialY: Math.random() * (yMovementRange / 2) - yMovementRange / 4,
-      // Randomized keyframes for continuous movement
-      animateKeyframes: {
-        x: Array.from({ length: 4 }, () => Math.random() * xMovementRange - xMovementRange / 2),
-        y: Array.from({ length: 4 }, () => Math.random() * yMovementRange - yMovementRange / 2),
-        // Randomized opacities for breathing effect
-        opacity: [0.1, Math.random() * 0.4 + 0.1, 0.1, Math.random() * 0.4 + 0.1, 0.1],
-        // Randomized scaling for dynamic size
-        scale: [Math.random() * 0.5 + 0.5, Math.random() * 1.5 + 0.5, Math.random() * 0.5 + 0.5],
-      },
-      // Randomized duration and delay for non-uniform patterns
-      duration: Math.random() * 15 + 10, // 10s to 25s
-      delay: Math.random() * 10, // 0s to 10s
-      color: colors[i % colors.length],
-    });
-  }
-  return particles;
+  return Array.from({ length: count }, (_, i) => ({
+    id: i,
+    initialX: Math.random() * 100 - 50,
+    initialY: Math.random() * 100 - 50,
+    animateKeyframes: {
+      x: Array.from({ length: 4 }, () => Math.random() * 200 - 100),
+      y: Array.from({ length: 4 }, () => Math.random() * 200 - 100),
+      opacity: [0.4, 0.7, 0.4, 0.7, 0.4],
+      scale: [1, 1.4, 1],
+    },
+    duration: Math.random() * 20 + 15,
+    delay: Math.random() * 5,
+    color: colors[i % colors.length],
+  }));
 };
 
 export const QueueHeroCard: React.FC<QueueHeroCardProps> = ({
@@ -67,100 +52,173 @@ export const QueueHeroCard: React.FC<QueueHeroCardProps> = ({
   estimatedWaitMins,
   currentlyServing,
   aheadOfYou,
-  joinedAt
+  joinedAt,
+  visitDetails,
 }) => {
-  // Use useMemo to generate particles configuration once on component mount
-  const particlesCount = 20; // Number of particles
-  const particlesConfig = useMemo(() => generateParticlesConfig(particlesCount), []);
+  const particlesConfig = useMemo(() => generateParticlesConfig(6), []);
+  const [showBack, setShowBack] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const frontRef = useRef<HTMLDivElement>(null);
+  const backRef = useRef<HTMLDivElement>(null);
+
+  const HALF = 0.18;
+
+  const handleFlip = () => {
+    if (isAnimating) return;
+    setIsAnimating(true);
+
+    const outEl = showBack ? backRef.current : frontRef.current;
+    const inEl  = showBack ? frontRef.current : backRef.current;
+    if (!outEl || !inEl) return;
+
+    animate(outEl, { scaleX: 0 }, {
+      duration: HALF,
+      ease: [0.4, 0, 1, 1],
+      onComplete: () => {
+        setShowBack(prev => !prev);
+        animate(inEl, { scaleX: [0, 1] }, {
+          duration: HALF,
+          ease: [0, 0, 0.6, 1],
+          onComplete: () => setIsAnimating(false),
+        });
+      },
+    });
+  };
+
+  useEffect(() => {
+    if (frontRef.current) frontRef.current.style.transform = 'scaleX(1)';
+    if (backRef.current)  backRef.current.style.transform  = 'scaleX(0)';
+  }, []);
 
   return (
-    <section className="bg-surface-container-lowest rounded-2xl p-6 shadow-[0px_6px_20px_rgba(0,0,0,0.06)] flex flex-col items-center border border-surface-container-highest/50 relative overflow-hidden w-full max-w-sm mx-auto">
-      
-      {/* Animated Ambient Background - Constant Particle Animation */}
-      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-        {/* Static overlay gradient for a base color and text readability */}
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent backdrop-blur-[2px]" />
-        
-        {/* Render particles based on the configuration */}
-        {particlesConfig.map(config => (
-          <motion.div
-            key={config.id}
-            initial={{ x: config.initialX, y: config.initialY, opacity: 0.1, scale: 0.5 }}
-            animate={{
-              x: [...config.animateKeyframes.x, config.initialX],
-              y: [...config.animateKeyframes.y, config.initialY],
-              opacity: config.animateKeyframes.opacity,
-              scale: config.animateKeyframes.scale,
-            }}
-            transition={{
-              duration: config.duration,
-              delay: config.delay,
-              repeat: Infinity,
-              ease: "linear", // Use linear for smooth, constant movement
-            }}
-            style={{
-              background: config.color,
-            }}
-            // Small particle styling with a subtle blur
-            className="absolute rounded-full w-4 h-4 blur-[1px]"
-          />
-        ))}
-      </div>
-
-      {/* Content (Z-10 to stay above the animated background) */}
-      <div className="z-10 flex flex-col items-center w-full relative">
-        <span className="font-meta-label text-meta-label text-on-surface-variant mb-2 uppercase tracking-widest text-[11px] font-semibold">
-          Your Token
-        </span>
-        
-        <motion.div 
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.5, type: "spring", bounce: 0.4 }}
-          className="flex items-baseline gap-2 mb-2"
+    <div
+      className="w-full max-w-sm mx-auto cursor-pointer relative h-[300px]"
+      onClick={handleFlip}
+    >
+      {/* FRONT */}
+      <div
+        ref={frontRef}
+        className="absolute inset-0 rounded-2xl shadow-[0px_8px_30px_rgba(0,0,0,0.08)] flex flex-col items-center border border-white/20 overflow-hidden bg-surface-container-lowest"
+      >
+        {/*
+          Particles are in an isolated stacking context.
+          isolation:isolate prevents their GPU filter promotion
+          from bleeding up into the parent card or sibling text layer.
+        */}
+        <div
+          className="absolute inset-0 z-0 overflow-hidden pointer-events-none flex items-center justify-center"
+          style={{ isolation: 'isolate' }}
         >
-          <span className="text-on-surface font-headline-lg-mobile text-[48px] leading-none font-bold tracking-tight">
+          {particlesConfig.map(config => (
+            <motion.div
+              key={config.id}
+              initial={{ x: config.initialX, y: config.initialY, opacity: 0.4, scale: 1 }}
+              animate={{
+                x: [...config.animateKeyframes.x, config.initialX],
+                y: [...config.animateKeyframes.y, config.initialY],
+                opacity: config.animateKeyframes.opacity,
+                scale: config.animateKeyframes.scale,
+              }}
+              transition={{ duration: config.duration, delay: config.delay, repeat: Infinity, ease: 'linear' }}
+              style={{ background: config.color }}
+              className="absolute rounded-full w-40 h-40 blur-[60px]"
+            />
+          ))}
+          {/* Solid overlay — NOT backdrop-filter */}
+          <div className="absolute inset-0 bg-surface-container-lowest/50" />
+          <div className="absolute inset-0 bg-gradient-to-br from-white/8 via-transparent to-black/5" />
+        </div>
+
+        {/* Text layer — zero GPU filters, renders natively crisp */}
+        <div className="z-10 flex flex-col items-center w-full relative h-full justify-between p-6">
+          <span className="text-on-surface-variant mb-1 uppercase tracking-widest text-[11px] font-semibold">
+            Your Token
+          </span>
+
+          <span className="text-on-surface text-[48px] leading-none font-bold tracking-tight">
             #{tokenNumber}
           </span>
-        </motion.div>
 
-        <div className="w-full h-px bg-surface-variant/60 my-4"></div>
-        
-        <div className="flex flex-col items-center gap-1">
-          <span className="font-wait-time text-wait-time text-on-surface font-semibold text-[28px] leading-tight">
-            Approx {estimatedWaitMins} mins
-          </span>
-          <span className="font-meta-label text-meta-label text-on-surface-variant text-sm">
-            Estimated wait time
-          </span>
-        </div>
+          <div className="w-full h-px bg-surface-variant/40 my-2" />
 
-        {/* Sub-card with backdrop-blur-md continues to interact with background animation */}
-        <div className="w-full bg-surface-container-high/80 backdrop-blur-md rounded-2xl px-5 py-4 mt-6 flex justify-between items-center shadow-sm border border-white/10">
-          <div className="flex flex-col">
-            <span className="font-meta-label text-meta-label text-on-surface-variant text-[12px] mb-1">
-              Currently Serving
+          <div className="flex flex-col items-center gap-0.5">
+            <span className="text-on-surface font-semibold text-[24px] leading-tight">
+              Approx {estimatedWaitMins} mins
             </span>
-            <span className="font-wait-time text-wait-time text-primary font-bold text-lg">
-              #{currentlyServing}
+            <span className="text-on-surface-variant text-xs">
+              Estimated wait time
             </span>
           </div>
-          <div className="w-px h-8 bg-surface-variant"></div>
-          <div className="flex flex-col items-end">
-            <span className="font-meta-label text-meta-label text-on-surface-variant text-[12px] mb-1">
-              Ahead of You
-            </span>
-            <span className="font-wait-time text-wait-time text-on-surface font-bold text-lg">
-              {aheadOfYou} {aheadOfYou === 1 ? 'customer' : 'customers'}
+
+          {/* Sub-card: solid bg replaces backdrop-blur-xl */}
+          <div className="w-full bg-white/15 rounded-xl px-4 py-3 flex justify-between items-center border border-white/20">
+            <div className="flex flex-col">
+              <span className="text-on-surface-variant text-[10px] mb-0.5">Currently Serving</span>
+              <span className="text-primary font-bold text-base">#{currentlyServing}</span>
+            </div>
+            <div className="w-px h-6 bg-surface-variant/50" />
+            <div className="flex flex-col items-end">
+              <span className="text-on-surface-variant text-[10px] mb-0.5">Ahead of You</span>
+              <span className="text-on-surface font-bold text-base">
+                {aheadOfYou} {aheadOfYou === 1 ? 'customer' : 'customers'}
+              </span>
+            </div>
+          </div>
+
+          <div className="flex justify-between w-full items-center mt-2">
+            <span className="text-on-surface-variant/60 text-[10px]">Joined at {joinedAt}</span>
+            <span className="text-primary text-[10px] font-semibold flex items-center gap-1">
+              <span className="material-symbols-outlined text-[12px]">flip</span>
+              Flip for details
             </span>
           </div>
         </div>
-
-        <span className="font-meta-label text-meta-label text-on-surface-variant/60 mt-5 text-[11px]">
-          Joined queue at {joinedAt}
-        </span>
       </div>
-    </section>
+
+      {/* BACK */}
+      <div
+        ref={backRef}
+        className="absolute inset-0 bg-surface-container-lowest rounded-2xl p-6 shadow-[0px_8px_30px_rgba(0,0,0,0.08)] flex flex-col border border-white/20 overflow-hidden"
+      >
+        <div className="flex flex-col h-full justify-between">
+          <div className="flex justify-between items-center border-b border-surface-variant/30 pb-2">
+            <h3 className="text-on-surface font-semibold text-base">Visit Details</h3>
+            {visitDetails.isPeakRush && (
+              <span className="bg-error-container/40 text-error px-2 py-0.5 rounded-full text-[10px] font-bold flex items-center gap-0.5 uppercase border border-error/20">
+                <span className="material-symbols-outlined text-[12px]">trending_up</span>
+                Peak
+              </span>
+            )}
+          </div>
+
+          <div className="flex flex-col gap-3 py-3 flex-1 justify-center">
+            <div className="flex justify-between items-center">
+              <span className="text-on-surface-variant text-sm">Service</span>
+              <span className="text-on-surface font-medium text-sm">{visitDetails.service}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-on-surface-variant text-sm">Est. Duration</span>
+              <span className="text-on-surface font-medium text-sm">{visitDetails.duration}</span>
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-on-surface-variant text-sm">Location</span>
+              <div className="flex justify-between items-center">
+                <span className="text-on-surface font-medium text-sm truncate max-w-[80%]">{visitDetails.location}</span>
+                <span className="material-symbols-outlined text-primary cursor-pointer">map</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-between w-full items-center border-t border-surface-variant/30 pt-2">
+            <span className="text-on-surface-variant/60 text-[10px]">Tap anywhere to go back</span>
+            <span className="text-primary text-[10px] font-semibold flex items-center gap-1">
+              <span className="material-symbols-outlined text-[12px]">flip</span>
+              Flip back
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
