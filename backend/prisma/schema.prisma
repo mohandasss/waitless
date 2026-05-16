@@ -64,3 +64,13 @@ model Queue {
   salon              Salon     @relation(fields: [salonId], references: [id])
   service            Service   @relation(fields: [serviceId], references: [id])
 }
+
+
+model OtpVerification {
+  id        Int      @id @default(autoincrement())
+  phone     String
+  otp       String
+  expiresAt DateTime
+  verified  Boolean  @default(false)
+  createdAt DateTime @default(now())
+}

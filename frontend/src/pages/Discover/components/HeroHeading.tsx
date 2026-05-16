@@ -2,18 +2,26 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import SplitType from "split-type";
 
-export default function HeroHeading() {
+interface HeroHeadingProps {
+  text?: string;
+  className?: string;
+  as?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+}
+
+export default function HeroHeading({ 
+  text = "Find your next fresh look", 
+  className = "text-headline-lg-mobile font-headline-lg-mobile text-on-surface mb-lg leading-tight",
+  as: Component = "h1"
+}: HeroHeadingProps) {
   const headingRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
     if (!headingRef.current) return;
 
-    // Split the text into characters
     const split = new SplitType(headingRef.current, {
       types: "chars",
     });
 
-    // Animate the characters
     gsap.from(split.chars, {
       y: 30,
       opacity: 0,
@@ -22,18 +30,17 @@ export default function HeroHeading() {
       ease: "power4.out",
     });
 
-    // Cleanup function to revert the split on unmount
     return () => {
       split.revert();
     };
-  }, []);
+  }, [text]);
 
   return (
-    <h1
+    <Component
       ref={headingRef}
-      className="text-headline-lg-mobile font-headline-lg-mobile text-on-surface mb-lg leading-tight"
+      className={className}
     >
-      Find your next fresh look
-    </h1>
+      {text}
+    </Component>
   );
 }

@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import authRoutes from './routes/auth.routes.js';
 
 dotenv.config();
 
@@ -14,8 +15,8 @@ app.get('/', (req, res) => {
   res.json({ message: 'Waitless Saloon Backend is running', status: 'healthy' });
 });
 
-// Import and use routes here when ready
-// import appointmentRoutes from './routes/appointments';
-// app.use('/api/appointments', appointmentRoutes);
+// Auth routes
+app.use('/auth', authRoutes);
 
 export default app;
+
