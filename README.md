@@ -1,4 +1,4 @@
-# WaitLess (QueueCut) — Salon Queue Management MVP
+# WaitLess — Salon Queue Management MVP
 
 ## Overview
 WaitLess is a mobile-first full-stack salon queue and booking system designed to solve local salon waiting chaos, customer uncertainty, and walkout loss.
