@@ -1,5 +1,7 @@
 
 import twilio from "twilio";
+import {prisma} from "../utils/prisma.js";
+import { signTokens, parseExpiryToMs } from "../utils/jwt.js";
 
 export type AuthMethod = "sms" | "whatsapp";
 
@@ -131,12 +133,27 @@ export const verifyOTP = async (
 
   deleteOtp(normalizedPhone, method);
 
+  // Issue JWTs and prepare refresh token persistence via utils
+  const tokens = await signTokens(normalizedPhone, method);
+
+  await prisma.refreshToken.create({
+    data: {
+      phone: normalizedPhone,
+      tokenHash: tokens.refreshTokenHash,
+      expiresAt: tokens.refreshExpiresAt,
+    },
+  });
+
   return {
     provider: client ? "twilio" : "mock",
     method,
     phone: normalizedPhone,
     verified: true,
-  };
+    accessToken: tokens.accessToken,
+    refreshToken: tokens.refreshToken,
+    accessTokenExpiresIn: tokens.accessTokenExpiresIn,
+    refreshTokenExpiresIn: tokens.refreshTokenExpiresIn,
+  } as const;
 };
 
 

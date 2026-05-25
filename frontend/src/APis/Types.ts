@@ -17,6 +17,8 @@ export type VerifyOtpData = {
   method: AuthMethod;
   phone: string;
   verified: boolean;
+  accessToken?: string;
+  accessTokenExpiresIn?: string;
   reason?: string;
 };
 

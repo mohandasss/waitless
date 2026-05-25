@@ -81,6 +81,10 @@ export default function SalonLogin() {
 			});
 
 			if (response.success) {
+				if (response.data?.accessToken) {
+					sessionStorage.setItem("accessToken", response.data.accessToken);
+				}
+
 				notifySuccess(response.message ?? "OTP verified successfully!");
 				navigate("/dashboard");
 				return;
