@@ -1,43 +1,39 @@
 import type { Request, Response } from 'express';
-import { sendOTP } from '../services/auth.service.js';
+import { sendOTP, verifyOTP } from '../services/auth.service.js';
+import { apiResponse } from '../utils/apiResponse.js';
 
 export const sendOTPController = async (req: Request, res: Response) => {
-  console.log("req.body", req.body);
   try {
     const { phone, method } = req.body;
 
-    // Basic validation
-    if (!phone) {
-      return res.status(400).json({
-        success: false,
-        message: 'Phone number is required',
-        data: {}
-      });
-    }
-
-    if (!method || (method !== 'sms' && method !== 'whatsapp')) {
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid or missing method. Must be "sms" or "whatsapp"',
-        data: {}
-      });
-    }
-
-    // Call service
     const result = await sendOTP(phone, method);
 
-    return res.status(200).json({
-      success: true,
-      message: 'OTP sent successfully',
-      data: result
-    });
+    const response = apiResponse(200, 'OTP sent successfully', true, result);
+    return res.status(response.statusCode).json(response.body);
   } catch (error: any) {
     console.error('[AuthController] Error in sendOTP:', error);
-    return res.status(500).json({
-      success: false,
-      message: 'Internal server error',
-      data: {}
-    });
+    const response = apiResponse(500, 'Internal server error', false);
+    return res.status(response.statusCode).json(response.body);
+  }
+};
+
+export const verifyOTPController = async (req: Request, res: Response) => {
+  try {
+    const { phone, method, otp } = req.body;
+
+    const result = await verifyOTP(phone, method, otp);
+
+    if (!result.verified) {
+      const response = apiResponse(400, 'Invalid or expired OTP', false, result);
+      return res.status(response.statusCode).json(response.body);
+    }
+
+    const response = apiResponse(200, 'OTP verified successfully', true, result);
+    return res.status(response.statusCode).json(response.body);
+  } catch (error: any) {
+    console.error('[AuthController] Error in verifyOTP:', error);
+    const response = apiResponse(500, 'Internal server error', false);
+    return res.status(response.statusCode).json(response.body);
   }
 };
 

@@ -2,21 +2,34 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
+import type { AuthMethod } from "@/APis/api";
 
 interface OTPVerificationProps {
-  onVerify: (otp: string) => void;
+  onVerify: (otp: string) => Promise<void> | void;
   onBack: () => void;
+  method: AuthMethod;
   phoneNumber?: string;
+  isVerifying?: boolean;
+  onResend: () => Promise<void> | void;
+  isResending?: boolean;
 }
 
-export function OTPVerification({ onVerify, onBack, phoneNumber = "+91 XXXXX XXXXX" }: OTPVerificationProps) {
+export function OTPVerification({
+  onVerify,
+  onBack,
+  phoneNumber = "+91 XXXXX XXXXX",
+  isVerifying = false,
+  onResend,
+  isResending = false,
+}: OTPVerificationProps) {
   const [otp, setOtp] = React.useState("");
+
+  const handleVerify = () => {
+    void onVerify(otp);
+  };
 
   const handleComplete = (value: string) => {
     setOtp(value);
-    if (value.length === 6) {
-      onVerify(value);
-    }
   };
 
   return (
@@ -46,16 +59,23 @@ export function OTPVerification({ onVerify, onBack, phoneNumber = "+91 XXXXX XXX
 
         <div className="text-center text-sm text-on-surface-variant">
           Didn't receive the code?{" "}
-          <button className="text-primary underline underline-offset-4 font-medium hover:text-primary/80">Resend</button>
+          <button
+            type="button"
+            onClick={() => void onResend()}
+            disabled={isResending}
+            className="text-primary underline underline-offset-4 font-medium hover:text-primary/80 disabled:opacity-50"
+          >
+            {isResending ? "Resending..." : "Resend"}
+          </button>
         </div>
       </CardContent>
       <CardFooter className="flex flex-col gap-3">
         <Button
-          onClick={() => onVerify(otp)}
-          disabled={otp.length !== 6}
+          onClick={handleVerify}
+          disabled={otp.length !== 6 || isVerifying}
           className="w-full !text-white bg-primary-container py-lg font-body-cta text-body-cta rounded-full flex justify-center items-center shadow-[0px_6px_20px_rgba(0,0,0,0.08)] hover:bg-primary-container/90 disabled:opacity-50"
         >
-          Verify
+          {isVerifying ? "Verifying..." : "Verify"}
         </Button>
         <Button
           onClick={onBack}

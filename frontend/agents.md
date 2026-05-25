@@ -76,6 +76,12 @@ Always choose:
 - use presenation and container architecture
 - use Shadcn components for inputs and buttons
 
+### API usage rule:
+- Never call APIs directly from page components
+- Put each related API flow inside its own custom hook
+- Hooks must expose `data`, `loading`, and `error` for fetch-style flows
+- Use TanStack Query for server-state API flows, especially mutations
+
 ---
 
 ## ALWAYS HANDLE 3 STATES:
