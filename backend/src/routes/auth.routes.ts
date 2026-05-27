@@ -1,14 +1,16 @@
 import { Router } from 'express';
-import { sendOTPController, verifyOTPController } from '../controllers/auth.controller.js';
-import { validateSendOtpRequest, validateVerifyOtpRequest } from '../middlewares/auth.middleware.js';
+import { saloonRegisterController, sendOTPController, verifyOTPController } from '../controllers/auth.controller.js';
+import { RegisterSaloonRequest, validateSendOtpRequest, validateVerifyOtpRequest } from '../middlewares/auth.middleware.js';
+import { otpRateLimiter } from '../utils/ratelimiter.js';
 
 const router = Router();
 
 // POST /auth/send-otp
-router.post('/send-otp', validateSendOtpRequest, sendOTPController);
+router.post('/login',  validateSendOtpRequest, otpRateLimiter, sendOTPController);
+router.post('/register',  RegisterSaloonRequest, saloonRegisterController);
 
 // POST /auth/verify-otp
-router.post('/verify-otp', validateVerifyOtpRequest, verifyOTPController);
+router.post('/verify-otp', validateVerifyOtpRequest, otpRateLimiter, verifyOTPController);
 
 export default router;
 

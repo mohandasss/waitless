@@ -1,19 +1,19 @@
-import type { Request, Response } from 'express';
-import { sendOTP, verifyOTP } from '../services/auth.service.js';
-import { apiResponse } from '../utils/apiResponse.js';
-import { setRefreshTokenCookie } from '../utils/cookies.js';
+import type { Request, Response } from "express";
+import { saloonRegisterService, sendOTP, verifyOTP } from "../services/auth.service.js";
+import { apiResponse } from "../utils/apiResponse.js";
+import { setAccessTokenCookie as setRefreshTokenCookie } from "../utils/cookies.js";
+import { parseExpiryToMs } from "../utils/jwt.js";
+
 export const sendOTPController = async (req: Request, res: Response) => {
   try {
     const { phone, method } = req.body;
 
     const result = await sendOTP(phone, method);
 
-    const response = apiResponse(200, 'OTP sent successfully', true, result);
-    return res.status(response.statusCode).json(response.body);
-  } catch (error: any) {
-    console.error('[AuthController] Error in sendOTP:', error);
-    const response = apiResponse(500, 'Internal server error', false);
-    return res.status(response.statusCode).json(response.body);
+    return apiResponse(res, 200, "OTP sent successfully", true, result);
+  } catch (error: unknown) {
+    console.error("[AuthController] Error in sendOTP:", error);
+    return apiResponse(res, 500, "Internal server error", false);
   }
 };
 
@@ -24,59 +24,56 @@ export const verifyOTPController = async (req: Request, res: Response) => {
     const result = await verifyOTP(phone, method, otp);
 
     if (!result.verified) {
-      const response = apiResponse(400, 'Invalid or expired OTP', false, result);
-      return res.status(response.statusCode).json(response.body);
+      return apiResponse(res, 401, "Invalid OTP", false);
     }
 
     // Set refresh token as secure httpOnly cookie and return access token in body
     try {
-      const refreshToken = (result as any).refreshToken as string | undefined;
-      const refreshTokenExpiresIn = (result as any).refreshTokenExpiresIn as string | undefined;
+      const refreshToken = result.refreshToken as string | undefined;
+      const refreshTokenExpiresIn = result.refreshTokenExpiresIn as
+        | string
+        | undefined;
 
-      const cookieMaxAge = parseExpiryToMs(refreshTokenExpiresIn || process.env.JWT_REFRESH_EXPIRES || '7d');
+      const cookieMaxAge = parseExpiryToMs(
+        refreshTokenExpiresIn || process.env.JWT_REFRESH_EXPIRES || "7d",
+      );
 
       if (refreshToken) {
         setRefreshTokenCookie(res, refreshToken, cookieMaxAge);
       }
     } catch (cookieErr) {
-      console.warn('Failed to set refresh token cookie', cookieErr);
+      console.warn("Failed to set refresh token cookie", cookieErr);
     }
 
     // Return access token and verification info
     const payload = {
-      accessToken: (result as any).accessToken,
-      accessTokenExpiresIn: (result as any).accessTokenExpiresIn,
-      provider: (result as any).provider,
-      method: (result as any).method,
-      phone: (result as any).phone,
+      accessToken: result.accessToken,
+      accessTokenExpiresIn: result.accessTokenExpiresIn,
+      provider: result.provider,
+      method: result.method,
+      phone: result.phone,
       verified: true,
     };
 
-    const response = apiResponse(200, 'OTP verified successfully', true, payload);
-    return res.status(response.statusCode).json(response.body);
+    return apiResponse(res, 200, "OTP verified successfully", true, payload);
   } catch (error: any) {
-    console.error('[AuthController] Error in verifyOTP:', error);
-    const response = apiResponse(500, 'Internal server error', false);
-    return res.status(response.statusCode).json(response.body);
+    console.error("[AuthController] Error in verifyOTP:", error);
+    return apiResponse(res, 500, "Internal server error", false);
   }
 };
 
-const parseExpiryToMs = (expiry: string) => {
-  const m = expiry.match(/^(\d+)(s|m|h|d)?$/);
-  if (!m) return 7 * 24 * 60 * 60 * 1000;
-  const value = Number(m[1]);
-  const unit = m[2] || 's';
-  switch (unit) {
-    case 's':
-      return value * 1000;
-    case 'm':
-      return value * 60 * 1000;
-    case 'h':
-      return value * 60 * 60 * 1000;
-    case 'd':
-      return value * 24 * 60 * 60 * 1000;
-    default:
-      return value * 1000;
-  }
-};
+export const saloonRegisterController = async (req: Request, res: Response) => {
+  console.log("reqsdasdasdasq", req.body);
+  const { name, saloon_name, address, phone } = req.body;
+  try {
+      await saloonRegisterService(name, saloon_name, address, phone);
+      return apiResponse(res, 200, "Saloon registered successfully", true, null);
 
+
+  } catch (error) {
+
+
+
+  }
+}
+  

@@ -16,8 +16,7 @@ app.use(express.json());
 
 // Basic health check route
 app.get('/', (req, res) => {
-  const response = apiResponse(200, 'Waitless Saloon Backend is running', true, { status: 'healthy' });
-  res.status(response.statusCode).json(response.body);
+  return apiResponse(res , 200 , "working" , true , null )
 });
 
 // Auth routes

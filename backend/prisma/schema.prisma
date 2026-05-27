@@ -68,7 +68,7 @@ model Queue {
 
 model OtpVerification {
   id        Int      @id @default(autoincrement())
-  phone     String
+  phone     String @unique
   otp       String
   expiresAt DateTime
   verified  Boolean  @default(false)

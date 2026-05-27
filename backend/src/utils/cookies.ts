@@ -1,6 +1,6 @@
 import type { Response } from 'express';
 
-export const setRefreshTokenCookie = (
+export const setAccessTokenCookie = (
   res: Response,
   token: string,
   maxAgeMs: number
@@ -9,7 +9,7 @@ export const setRefreshTokenCookie = (
   const secure =
     process.env.NODE_ENV === 'production' || frontendUrl.startsWith('https');
 
-  res.cookie('refreshToken', token, {
+  res.cookie('accessToken', token, {
     httpOnly: true,
     secure,
     sameSite: 'lax',
@@ -18,4 +18,4 @@ export const setRefreshTokenCookie = (
   });
 };
 
-export default setRefreshTokenCookie;
+export default setAccessTokenCookie;
