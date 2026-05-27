@@ -47,10 +47,10 @@ export const validateVerifyOtpRequest = (
       
   }
 
-  if (!isOtp(otp)) {
-    return apiResponse(res, 400, 'OTP must be a 6-digit number', false);
+  // if (!isOtp(otp)) {
+  //   return apiResponse(res, 400, 'OTP must be a 6-digit number', false);
    
-  }
+  // }
 
   req.body.phone = phone;
   req.body.method = method;

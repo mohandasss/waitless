@@ -1,6 +1,6 @@
 import { prisma } from "../utils/prisma.js";
 
-export const  saveOtp = async (phone: string, otp: string) => {
+export const saveOtp = async (phone: string, otp: string) => {
   return await prisma.otpVerification.upsert({
     where: {
       phone,
@@ -17,37 +17,57 @@ export const  saveOtp = async (phone: string, otp: string) => {
   });
 };
 
-
-
-
 export const verifyOtp = async (phone: string, otp: string) => {
+  console.log("Verifying OTP for phone:", phone, "otp:", otp);
   try {
-    const otpRecord = await prisma.otpVerification.findFirst({
-      where: {
-        phone,
-        otp,
-        verified: false,
-        expiresAt: {
-          gt: new Date(),
-        },
-      },
+    const otpRecord = await prisma.otpVerification.findUnique({
+      where: { phone },
     });
+
+    console.log("OTP record found:", otpRecord);
 
     if (!otpRecord) {
-      throw new Error("otp expired or invalid");
+      throw new Error("no otp record for this phone");
     }
 
-    await prisma.otpVerification.update({
-      where: {
-        phone,
-      },
-      data: {
-        verified: true,
-      },
+    if (otpRecord.verified) {
+      throw new Error("otp already verified");
+    }
+
+    if (otpRecord.otp !== otp) {
+      throw new Error("invalid otp");
+    }
+
+    if (otpRecord.expiresAt <= new Date()) {
+      throw new Error("otp expired");
+    }
+
+    const updated = await prisma.otpVerification.update({
+      where: { id: otpRecord.id },
+      data: { verified: true },
     });
 
-    return otpRecord;
+    console.log("OTP verified successfully for phone:", phone);
+    const pendingSalon = await prisma.pendingSalon.findUnique({
+      where: { phone },
+    });
+    console.log("Pending salon record for phone:", phone, pendingSalon);
+
+    if (pendingSalon) {
+      await prisma.salon.create({
+        data: {
+          ownerName: pendingSalon?.name,
+          salonName: pendingSalon?.saloon_name,
+          address: pendingSalon?.address,
+          phone: pendingSalon?.phone,
+        },
+      });
+    }
+
+    return updated;
   } catch (error) {
+    console.error("verifyOtp error:", error);
+    if (error instanceof Error) throw error;
     throw new Error("server Error");
   }
 };
