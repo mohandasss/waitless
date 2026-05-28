@@ -70,7 +70,7 @@ export const registerSalonController = async (req: Request, res: Response) => {
 };
 
 export const refreshTokenController = async (req: Request, res: Response) => {
-  console.log("Received refresh token request with token:", req.cookies?.refreshToken);
+ 
   try {
     const refreshToken = req.cookies?.refreshToken
     console.log("Received refresh token request with token:", refreshToken);

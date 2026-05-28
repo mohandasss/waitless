@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 import authRoutes from './routes/auth.routes.js';
 import { apiResponse } from './utils/apiResponse.js';
 import cookieParser from 'cookie-parser';
+import salonRoutes from './routes/salon.routes.js';
+import { globalErrorHandler } from './utils/globalErrorHandler.js';
 dotenv.config();
 
 const app = express();
@@ -21,6 +23,9 @@ app.get('/', (req, res) => {
 
 // Auth routes
 app.use('/auth', authRoutes);
+app.use('/salon', salonRoutes );
+
+app.use(globalErrorHandler);
 
 export default app;
 

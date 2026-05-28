@@ -22,7 +22,7 @@ model Salon {
   salonName    String
   ownerName    String
   address      String
-  phone        String
+  phone        String @unique
   isOpen       Boolean @default(true)
   currentToken Int     @default(0)
 

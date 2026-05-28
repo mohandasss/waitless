@@ -11,12 +11,23 @@ export const saveRefreshTokenRepository = async (
 ) => {
   const tokenHash = hashToken(token);
 
-  return prisma.refreshToken.create({
-    data: {
-      phone,
-      tokenHash,
-      expiresAt,
-    },
+  return prisma.$transaction(async (tx) => {
+    await tx.refreshToken.updateMany({
+      where: {
+        phone,
+        revoked: false,
+        expiresAt: { gt: new Date() },
+      },
+      data: { revoked: true },
+    });
+
+    return tx.refreshToken.create({
+      data: {
+        phone,
+        tokenHash,
+        expiresAt,
+      },
+    });
   });
 };
 
@@ -29,6 +40,7 @@ export const findRefreshTokenRepository = async (token: string, phone?: string) 
       gt: new Date(),
     },
   };
+  console.log("Finding refresh token with hash:", tokenHash, "and phone:", phone);
 
   if (phone) where.phone = phone;
 

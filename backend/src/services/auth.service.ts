@@ -114,9 +114,10 @@ export const rotateRefreshTokenService = async (refreshToken: string) => {
   try {
     // verify token signature first
     const decoded = verifyToken(refreshToken, "refresh") as any;
-
+    console.log("Decoded refresh token payload:", decoded);
     const phone = decoded?.phone;
     const existing = await findRefreshTokenRepository(refreshToken, phone);
+      console.log("Existing refresh token record from DB:", existing);
     if (!existing) {
       console.error("Refresh token not found in DB", { phone, token: refreshToken });
       throw new Error("Invalid or revoked refresh token");
