@@ -4,22 +4,39 @@ import { saveOtp } from "../repository/otpRepository.js";
 import { generateOtp } from "../utils/miscHelpers.js";
 import type { AuthMethod } from "./auth.service.js";
 
-const isTwilioOtpEnabled = process.env.ENABLE_TWILIO_OTP === "true";
+const isTwilioOtpEnabled = false
 
-export const createAndSendOtp = async (phone: string, method: AuthMethod) => {
+export const generateAndSendOtpService = async (
+  phone: string,
+  method: AuthMethod
+) => {
   try {
     const otp = isTwilioOtpEnabled ? generateOtp() : "1234";
 
-    const otpToStore = isTwilioOtpEnabled ? await bcrypt.hash(otp, 10) : otp;
+    const otpToStore = isTwilioOtpEnabled
+      ? await bcrypt.hash(otp, 10)
+      : otp;
 
-    if (isTwilioOtpEnabled) {
-      await sendOtpMessage(phone, otp, method);
-    }
-
+    // Save OTP first
     await saveOtp(phone, otpToStore);
 
+    // Send message
+    if (isTwilioOtpEnabled) {
+      try {
+        await sendOtpMessage(phone, otp, method);
+      } catch (error) {
+        console.error("Failed to send OTP message:", error);
+
+        // optional cleanup
+        // await deleteOtp(phone);
+
+        throw new Error("Failed to send OTP message");
+      }
+    }
+
     return true;
-  } catch {
-    throw new Error("Failed to send OTP. Please try again later.");
+  } catch (error) {
+    console.error("OTP Service Error:", error);
+    throw new Error("Failed to process OTP request");
   }
 };

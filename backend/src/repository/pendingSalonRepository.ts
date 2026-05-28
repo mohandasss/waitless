@@ -1,8 +1,8 @@
 import { prisma } from "../utils/prisma.js";
 
-export const SavePendingSalon = async (
+export const savePendingSalonRepository = async (
   name: string,
-  saloon_name: string,
+  salon_name: string,
   address: string,
   phone: string,
 ) => {
@@ -13,12 +13,12 @@ export const SavePendingSalon = async (
       },
       update: {
         name,
-        saloon_name,
+        saloon_name: salon_name,
         address,
       },
       create: {
         name,
-        saloon_name,
+        saloon_name: salon_name,
         address,
         phone,
       }

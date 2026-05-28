@@ -11,10 +11,14 @@ export const signTokens = (payload: object) => {
   return { accessToken, refreshToken };
 };
 
-export const verifyToken = (token: string, type: "access" | "refresh") => {
+export const verifyToken = (
+  token: string,
+  type: "access" | "refresh"
+) => {
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!);
-    return decoded;
+    const secret = process.env.JWT_SECRET!;
+
+    return jwt.verify(token, secret);
   } catch (error) {
     throw new Error("Invalid token");
   }

@@ -1,13 +1,21 @@
 import type { Request, Response } from "express";
-import { saloonRegisterService, sendOTP, verifyOTP } from "../services/auth.service.js";
+import {
+  registerSalonService,
+  sendOtpService,
+  verifyOtpService,
+  rotateRefreshTokenService,
+} from "../services/auth.service.js";
 import { apiResponse } from "../utils/apiResponse.js";
-import { setAccessTokenCookie as setRefreshTokenCookie } from "../utils/cookies.js";
+import {
+  setAccessTokenCookie,
+  setRefreshTokenCookie,
+} from "../utils/cookies.js";
 
-export const LoginController = async (req: Request, res: Response) => {
+export const sendOtpController = async (req: Request, res: Response) => {
   try {
     const { phone, method } = req.body;
 
-    const result = await sendOTP(phone, method);
+    const result = await sendOtpService(phone, method);
 
     return apiResponse(res, 200, "OTP sent successfully", true, result);
   } catch {
@@ -15,33 +23,69 @@ export const LoginController = async (req: Request, res: Response) => {
   }
 };
 
-export const verifyOTPController = async (req: Request, res: Response) => {
+export const verifyOtpController = async (req: Request, res: Response) => {
   try {
     const { phone, method, otp } = req.body;
-     console.log("Received OTP verification request:", { phone, method, otp }); 
-    const result = await verifyOTP(phone, method, otp);
+    
+    const result = await verifyOtpService(phone, method, otp);
     console.log("OTP verification result:", result);
     if (!result.verified) {
       return apiResponse(res, 401, "Invalid OTP", false);
     }
-
-  
-
-    return apiResponse(res, 200, "OTP verified successfully", true);
+    setRefreshTokenCookie(res, result.refreshToken, 1000 * 60 * 60 * 24 * 7); // 7 days
+    setAccessTokenCookie(res, result.accessToken, 1000 * 60 * 15); // 15 minutes
+    return apiResponse(res, 200, "OTP verified successfully", true, result);
   } catch {
     return apiResponse(res, 500, "Internal server error", false);
   }
 };
 
-export const saloonRegisterController = async (req: Request, res: Response) => {
+export const registerSalonController = async (req: Request, res: Response) => {
   const { name, saloon_name, address, phone } = req.body;
+  console.log("saloon name", saloon_name);
+  console.log("Received salon registration request:", {
+    name,
+    saloon_name,
+    address,
+    phone,
+  });
   try {
-    const result = await saloonRegisterService(name, saloon_name, address, phone);
-      return apiResponse(res, 200, "Saloon registered successfully", true, result);
-
-
+    const result = await registerSalonService(
+      name,
+      saloon_name,
+      address,
+      phone,
+    );
+    // console.log("Saloon registration result:", result);
+    return apiResponse(res, 200, "Salon registered successfully", true, result);
   } catch {
-    return apiResponse(res, 500, "Failed to register saloon", false , null);
+    return apiResponse(
+      res,
+      500,
+      "Failed controller to register salon",
+      false,
+      null,
+    );
   }
-}
-  
+};
+
+export const refreshTokenController = async (req: Request, res: Response) => {
+  console.log("Received refresh token request with token:", req.cookies?.refreshToken);
+  try {
+    const refreshToken = req.cookies?.refreshToken
+    console.log("Received refresh token request with token:", refreshToken);
+    if (!refreshToken) {
+      return apiResponse(res, 401, "No refresh token", false);
+    }
+
+    const result = await rotateRefreshTokenService(refreshToken);
+
+    setRefreshTokenCookie(res, result.refreshToken, 1000 * 60 * 60 * 24 * 7);
+    setAccessTokenCookie(res, result.accessToken, 1000 * 60 * 15);
+
+    return apiResponse(res, 200, "Token refreshed", true, { accessToken: result.accessToken });
+  } catch (err) {
+    console.error("Refresh token error", err);
+    return apiResponse(res, 401, "Invalid refresh token", false);
+  }
+};

@@ -1,6 +1,7 @@
 import { prisma } from "../utils/prisma.js";
 
 export const saveOtp = async (phone: string, otp: string) => {
+  console.log("Saving OTP for phone:", phone);
   return await prisma.otpVerification.upsert({
     where: {
       phone,
@@ -17,7 +18,7 @@ export const saveOtp = async (phone: string, otp: string) => {
   });
 };
 
-export const verifyOtp = async (phone: string, otp: string) => {
+export const verifyOtpRepository = async (phone: string, otp: string) => {
   console.log("Verifying OTP for phone:", phone, "otp:", otp);
   try {
     const otpRecord = await prisma.otpVerification.findUnique({
@@ -30,9 +31,9 @@ export const verifyOtp = async (phone: string, otp: string) => {
       throw new Error("no otp record for this phone");
     }
 
-    if (otpRecord.verified) {
-      throw new Error("otp already verified");
-    }
+    // if (otpRecord.verified) {
+    //   throw new Error("otp already verified");
+    // }
 
     if (otpRecord.otp !== otp) {
       throw new Error("invalid otp");
@@ -66,7 +67,7 @@ export const verifyOtp = async (phone: string, otp: string) => {
 
     return updated;
   } catch (error) {
-    console.error("verifyOtp error:", error);
+    console.error("verifyOtpRepository error:", error);
     if (error instanceof Error) throw error;
     throw new Error("server Error");
   }
