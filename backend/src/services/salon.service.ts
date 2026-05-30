@@ -1,8 +1,13 @@
 import { GetSalonRepository } from "../repository/salon.repository.js";
 
-export const GetSalonService = async ( phone : string ) => {
+interface  GetSalonServiceParams {
+    pageNumber: number;
+    pageSize: number;
+}
 
-    const response = await GetSalonRepository(phone);
+export const GetSalonService = async ({ pageNumber, pageSize }: GetSalonServiceParams) => {
+
+    const response = await GetSalonRepository(pageNumber, pageSize);
     return response;
 
 }

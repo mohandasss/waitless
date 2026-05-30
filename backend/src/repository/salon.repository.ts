@@ -1,14 +1,23 @@
+import { getPagination } from "../utils/getPagination.js";
+import { buildPaginationResponse } from "../utils/pagination.js";
 import { prisma } from "../utils/prisma.js";
 
-export const GetSalonRepository = async (phone: string) => {
-    console.log("GetSalonRepository called with phone:", phone);
+export const GetSalonRepository = async (
+  pageNumber: number,
+  pageSize: number,
+) => {
+  const { skip, take } = getPagination(pageNumber, pageSize);
   const response = await prisma.salon.findMany({
-    where: {
-      phone,
-    },
+    skip,
+    take,
   });
-
+  const totalRecords = await prisma.salon.count();
 
   console.log("GetSalonRepository response:", response);
-  return response;
+  return buildPaginationResponse(
+    response,
+    pageNumber,
+    pageSize,
+    totalRecords
+  );
 };

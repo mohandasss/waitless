@@ -30,7 +30,7 @@ const client =
 
 export const sendOtpService = async (phone: string, method: AuthMethod) => {
   const normalizedPhone = normalizePhone(phone);
-  console.log("Sending OTP to phone:", normalizedPhone, "method:", method);
+ 
   if (isTwilioOtpEnabled && !client) {
     throw new Error(
       "Twilio credentials are not set. OTP delivery is disabled.",

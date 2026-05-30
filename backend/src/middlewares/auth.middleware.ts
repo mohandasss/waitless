@@ -104,8 +104,9 @@ export const validateToken = (
   res: Response,
   next: NextFunction,
 ) => {
-  const refreshToken = req.cookies?.refreshToken;
-  if (!refreshToken) {
+  const accessToken = req.cookies?.accessToken;
+  console.log("Received accessToken from cookies:", accessToken);
+  if (!accessToken) {
     return apiResponse(
       res,
       401,
@@ -116,8 +117,8 @@ export const validateToken = (
   }
 
   try {
-    console.log("refreshToken:", refreshToken);
-    const decoded = verifyToken(refreshToken, "refresh");
+    console.log("accessToken:", accessToken);
+    const decoded = verifyToken(accessToken, "access");
     console.log("Decoded token:", decoded);
     //@ts-ignore
     req.user = decoded; // Attach user info to request object
