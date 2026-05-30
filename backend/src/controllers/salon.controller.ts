@@ -2,7 +2,13 @@ import type { NextFunction, Request, Response } from "express";
 import { apiResponse } from "../utils/apiResponse.js";
 import { GetSalonService } from "../services/salon.service.js";
 export const GetSalonController = async (req: Request, res: Response) => {
-  const { pageNumber = 1, pageSize = 5 } = req.query;
+  const { pageNumber = 1, pageSize = 5, search } = req.query;   
+
+  console.log("GetSalonController called with query params:", {
+    pageNumber,
+    pageSize,
+    search,
+  });
   console.log("GetSalonController called", req.user);
   if (!req.user) {
     return apiResponse(res, 401, "Unauthorized", false);
@@ -10,7 +16,7 @@ export const GetSalonController = async (req: Request, res: Response) => {
 
   try {
     const response = await GetSalonService(
-        { pageNumber: Number(pageNumber), pageSize: Number(pageSize) }
+        { pageNumber: Number(pageNumber), pageSize: Number(pageSize) , search: String(search) }
     );
     return apiResponse(
       res,
