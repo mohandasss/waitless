@@ -79,7 +79,7 @@ export const RegisterSaloonRequest = (
   res: Response,
   next: NextFunction,
 ) => {
-  const { name, saloon_name, address, phone } = req.body;
+  const { name, saloon_name, address, phone, imageUrl } = req.body;
 
   if (phone.length !== 10) {
     return apiResponse(
@@ -94,6 +94,7 @@ export const RegisterSaloonRequest = (
   req.body.name = name;
   req.body.address = address;
   req.body.saloon_name = saloon_name;
+  req.body.imageUrl = imageUrl;
 
   next();
 };

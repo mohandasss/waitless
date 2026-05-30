@@ -5,25 +5,31 @@ export const savePendingSalonRepository = async (
   salon_name: string,
   address: string,
   phone: string,
+  imageUrl?: string,
 ) => {
   try {
-    await prisma.pendingSalon.upsert({
-      where :{
+    return await prisma.pendingSalon.upsert({
+      where: {
         phone,
       },
       update: {
         name,
         saloon_name: salon_name,
         address,
+        ...(imageUrl ? { imageUrl } : {}),
       },
       create: {
         name,
         saloon_name: salon_name,
         address,
         phone,
-      }
+        imageUrl: imageUrl ?? null,
+      },
     });
-  } catch {
-    throw new Error("Failed to save pending salon. Please try again later.");
+  } catch (error) {
+    console.error(error);
+    throw new Error(
+      "Failed to save pending salon. Please try again later."
+    );
   }
 };

@@ -61,6 +61,7 @@ export const verifyOtpRepository = async (phone: string, otp: string) => {
           salonName: pendingSalon?.saloon_name,
           address: pendingSalon?.address,
           phone: pendingSalon?.phone,
+          imageUrl: pendingSalon?.imageUrl,
         },
       });
     }

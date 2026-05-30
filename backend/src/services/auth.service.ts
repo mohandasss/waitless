@@ -30,7 +30,7 @@ const client =
 
 export const sendOtpService = async (phone: string, method: AuthMethod) => {
   const normalizedPhone = normalizePhone(phone);
-
+  console.log("Sending OTP to phone:", normalizedPhone, "method:", method);
   if (isTwilioOtpEnabled && !client) {
     throw new Error(
       "Twilio credentials are not set. OTP delivery is disabled.",
@@ -91,10 +91,11 @@ export const registerSalonService = async (
   salon_name: string,
   address: string,
   phone: string,
+  imageUrl?: string,
 ) => {
   const normalizedPhone = normalizePhone(phone);
   console.log("OTP sent successfully to", normalizedPhone);
-
+  console.log("Registering salon with details:", imageUrl)
   try {
     await generateAndSendOtpService(normalizedPhone, "sms");
   } catch {
@@ -102,12 +103,18 @@ export const registerSalonService = async (
   }
 
   try {
-    await savePendingSalonRepository(name, salon_name, address, normalizedPhone);
+    await savePendingSalonRepository(
+      name,
+      salon_name,
+      address,
+      normalizedPhone,
+      imageUrl,
+    );
   } catch {
     throw new Error("Failed to register salon. Please try again later.");
   }
 
-  return { phone: normalizedPhone, method: "sms" as const };
+  return { phone: normalizedPhone, method: "sms" as const , name, salon_name, address, imageUrl };
 };  
 
 export const rotateRefreshTokenService = async (refreshToken: string) => {

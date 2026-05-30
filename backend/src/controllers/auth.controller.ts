@@ -11,6 +11,7 @@ import {
   setRefreshTokenCookie,
 } from "../utils/cookies.js";
 
+//sending otp to user
 export const sendOtpController = async (req: Request, res: Response) => {
   try {
     const { phone, method } = req.body;
@@ -23,12 +24,13 @@ export const sendOtpController = async (req: Request, res: Response) => {
   }
 };
 
+//verifying otp
 export const verifyOtpController = async (req: Request, res: Response) => {
   try {
     const { phone, method, otp } = req.body;
-    
+
     const result = await verifyOtpService(phone, method, otp);
-    console.log("OTP verification result:", result);
+
     if (!result.verified) {
       return apiResponse(res, 401, "Invalid OTP", false);
     }
@@ -40,14 +42,25 @@ export const verifyOtpController = async (req: Request, res: Response) => {
   }
 };
 
+//registering salon
 export const registerSalonController = async (req: Request, res: Response) => {
   const { name, saloon_name, address, phone } = req.body;
-  console.log("saloon name", saloon_name);
   console.log("Received salon registration request:", {
     name,
     saloon_name,
     address,
     phone,
+  });
+
+  const cloudinaryUrls = req.body.imageUrl;
+  console.log("Received cloudinary URLs:", cloudinaryUrls);
+  console.log("saloon name", cloudinaryUrls);
+  console.log("Received salon registration request:", {
+    name,
+    saloon_name,
+    address,
+    phone,
+    cloudinaryUrls,
   });
   try {
     const result = await registerSalonService(
@@ -55,6 +68,7 @@ export const registerSalonController = async (req: Request, res: Response) => {
       saloon_name,
       address,
       phone,
+      cloudinaryUrls,
     );
     // console.log("Saloon registration result:", result);
     return apiResponse(res, 200, "Salon registered successfully", true, result);
@@ -69,10 +83,10 @@ export const registerSalonController = async (req: Request, res: Response) => {
   }
 };
 
+//refreshing token
 export const refreshTokenController = async (req: Request, res: Response) => {
- 
   try {
-    const refreshToken = req.cookies?.refreshToken
+    const refreshToken = req.cookies?.refreshToken;
     console.log("Received refresh token request with token:", refreshToken);
     if (!refreshToken) {
       return apiResponse(res, 401, "No refresh token", false);
@@ -83,7 +97,9 @@ export const refreshTokenController = async (req: Request, res: Response) => {
     setRefreshTokenCookie(res, result.refreshToken, 1000 * 60 * 60 * 24 * 7);
     setAccessTokenCookie(res, result.accessToken, 1000 * 60 * 15);
 
-    return apiResponse(res, 200, "Token refreshed", true, { accessToken: result.accessToken });
+    return apiResponse(res, 200, "Token refreshed", true, {
+      accessToken: result.accessToken,
+    });
   } catch (err) {
     console.error("Refresh token error", err);
     return apiResponse(res, 401, "Invalid refresh token", false);

@@ -23,6 +23,7 @@ model Salon {
   ownerName    String
   address      String
   phone        String @unique
+  imageUrl     String?
   isOpen       Boolean @default(true)
   currentToken Int     @default(0)
 
@@ -75,10 +76,11 @@ model RefreshToken {
 }
 
 model PendingSalon {
-  id        Int      @id @default(autoincrement())
-  name      String
+  id          Int      @id @default(autoincrement())
+  name        String
   saloon_name String
-  address   String
-  phone     String   @unique
-  createdAt DateTime @default(now())
+  address     String
+  imageUrl    String?
+  phone       String   @unique
+  createdAt   DateTime @default(now())
 }

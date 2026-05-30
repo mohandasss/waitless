@@ -10,6 +10,7 @@ export const generateAndSendOtpService = async (
   phone: string,
   method: AuthMethod
 ) => {
+  console.log("Generating and sending OTP for phone:", phone, "method:", method);
   try {
     const otp = isTwilioOtpEnabled ? generateOtp() : "1234";
 
