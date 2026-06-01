@@ -1,24 +1,36 @@
-import { Router } from 'express';
-import { registerSalonController, sendOtpController, verifyOtpController, refreshTokenController } from '../controllers/auth/auth.controller.js';
-import { RegisterSaloonRequest, validateSendOtpRequest, validateVerifyOtpRequest } from '../middlewares/auth.middleware.js';
-import { otpRateLimiter } from '../utils/ratelimiter.js';
-  import { upload , uploadToCloudinary } from '../utils/imageUploadUtil.js';
-    const router = Router();
+import { Router } from "express";
+import {
+  registerSalonController,
+  sendOtpController,
+  verifyOtpController,
+  refreshTokenController,
+} from "../controllers/auth/auth.controller.js";
+import {
+  RegisterSaloonRequest,
+  validateSendOtpRequest,
+  validateVerifyOtpRequest,
+} from "../middlewares/auth.middleware.js";
+import { otpRateLimiter } from "../utils/ratelimiter.js";
+import { upload, uploadToCloudinary } from "../utils/imageUploadUtil.js";
+const router = Router();
 
-    // POST /auth/send-otp
-    // router.post('/send-otp',  validateSendOtpRequest, otpRateLimiter, sendOtpController);
+// POST /auth/send-otp
+// router.post('/send-otp',  validateSendOtpRequest, otpRateLimiter, sendOtpController);
 
-    
-    router.post(
+router.post(
   "/register",
-  upload.single("imageUrl" ),
+  upload.single("imageUrl"),
   RegisterSaloonRequest,
   uploadToCloudinary,
-  registerSalonController
+  registerSalonController,
 );
-router.post('/verify-otp', validateVerifyOtpRequest, verifyOtpController);
-router.post('/refresh', refreshTokenController);
-router.post('/send-otp', validateSendOtpRequest, otpRateLimiter, sendOtpController);
+router.post("/verify-otp", validateVerifyOtpRequest, verifyOtpController);
+router.post("/refresh", refreshTokenController);
+router.post(
+  "/send-otp",
+  validateSendOtpRequest,
+  otpRateLimiter,
+  sendOtpController,
+);
 
 export default router;
-
