@@ -1,8 +1,15 @@
 import type { NextFunction, Request, Response } from "express";
 import { apiResponse } from "../utils/apiResponse.js";
-import { GetSalonService } from "../services/salon.service.js";
-export const GetSalonController = async (req: Request, res: Response) => {
-  const { pageNumber = 1, pageSize = 5, search } = req.query;   
+import {
+  GetAllSalonService,
+  GetSalonDetailsService,
+} from "../services/salon.service.js";
+export const GetSalonController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const { pageNumber = 1, pageSize = 5, search = "" } = req.query;
 
   console.log("GetSalonController called with query params:", {
     pageNumber,
@@ -15,9 +22,11 @@ export const GetSalonController = async (req: Request, res: Response) => {
   }
 
   try {
-    const response = await GetSalonService(
-        { pageNumber: Number(pageNumber), pageSize: Number(pageSize) , search: String(search) }
-    );
+    const response = await GetAllSalonService({
+      pageNumber: Number(pageNumber),
+      pageSize: Number(pageSize),
+      search: String(search),
+    });
     return apiResponse(
       res,
       200,
@@ -26,6 +35,28 @@ export const GetSalonController = async (req: Request, res: Response) => {
       response,
     );
   } catch (error) {
-    return apiResponse(res, 500, "Internal server error", false);
+    return next(error);
+  }
+};
+
+export const GetSalonDetailsController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { id } = req.params;
+    console.log("GetSalonDetailsController called with id:", id);
+
+    const response = await GetSalonDetailsService(Number(id));
+    return apiResponse(
+      res,
+      200,
+      "Salon details fetched successfully",
+      true,
+      response,
+    );
+  } catch (error) {
+    next(error);
   }
 };

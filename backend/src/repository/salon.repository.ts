@@ -2,25 +2,41 @@ import { getPagination } from "../utils/getPagination.js";
 import { buildPaginationResponse } from "../utils/pagination.js";
 import { prisma } from "../utils/prisma.js";
 
-export const GetSalonRepository = async (
+export const GetAllSalonRepository = async (
   pageNumber: number,
   pageSize: number,
   search: string,
 ) => {
-  console.log("Gsdsadsads:", { pageNumber, pageSize , search });
+  //reusebale whee for search and pagination
+  const where = {
+    salonName: {
+      contains: search,
+    },
+  };
+
+  console.log("Gsdsadsads:", { pageNumber, pageSize, search });
   const { skip, take } = getPagination(pageNumber, pageSize);
   const response = await prisma.salon.findMany({
     skip,
     take,
+    where,
+  });
+  const totalRecords = await prisma.salon.count({ where });
+
+  console.log("GetAllSalonRepository response:", response);
+  return buildPaginationResponse(response, pageNumber, pageSize, totalRecords);
+};
+
+export const GetSalonDetailsRepository = async (id: number) => {
+  const record = await prisma.salon.findUnique({
     where: {
-      salonName: {
-        contains: search,
-        mode: "insensitive",
-      },
+      id,
+    },
+    include: {
+      services: true,
+    
     },
   });
-  const totalRecords = await prisma.salon.count();
 
-  console.log("GetSalonRepository response:", response);
-  return buildPaginationResponse(response, pageNumber, pageSize, totalRecords);
+  return record;
 };

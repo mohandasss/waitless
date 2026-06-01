@@ -6,7 +6,7 @@ import { otpRateLimiter } from '../utils/ratelimiter.js';
     const router = Router();
 
     // POST /auth/send-otp
-    router.post('/login',  validateSendOtpRequest, otpRateLimiter, sendOtpController);
+    // router.post('/send-otp',  validateSendOtpRequest, otpRateLimiter, sendOtpController);
 
     
     router.post(
@@ -16,10 +16,9 @@ import { otpRateLimiter } from '../utils/ratelimiter.js';
   uploadToCloudinary,
   registerSalonController
 );
-
-// POST /auth/verify-otp
 router.post('/verify-otp', validateVerifyOtpRequest, verifyOtpController);
 router.post('/refresh', refreshTokenController);
+router.post('/send-otp', validateSendOtpRequest, otpRateLimiter, sendOtpController);
 
 export default router;
 

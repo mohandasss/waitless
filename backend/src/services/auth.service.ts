@@ -8,6 +8,7 @@ import {
   revokeRefreshTokenRepository,
 } from "../repository/refreshTokenRepository.js";
 import { verifyToken } from "../utils/jwt.js";
+import { ApiError } from "../utils/ApiError.js";
 
 import { generateAndSendOtpService } from "./otp.service.js";
 import { savePendingSalonRepository } from "../repository/pendingSalonRepository.js";
@@ -58,29 +59,28 @@ export const verifyOtpService = async (
     const record = await verifyOtpRepository(normalizedPhone, otp);
     console.log("5645645456", record);
     if (!record) {
-      throw new Error("invalid otp");
+      throw new ApiError(401, "Invalid OTP");
     }
 
     if (record.otp !== otp) {
-      throw new Error("Wrong OTP");
+      throw new ApiError(401, "Invalid OTP");
     }
 
     const { accessToken, refreshToken } = signTokens(record);
     const refreshExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-    try {
-      await saveRefreshTokenRepository(normalizedPhone, refreshToken, refreshExpiresAt);
-    } catch (err) {
-      console.error("Failed to save refresh token", err);
-      // continue — token issuance succeeds but persistence failed
-    }
+    await saveRefreshTokenRepository(normalizedPhone, refreshToken, refreshExpiresAt);
 
     return {
       ...record,
       accessToken,
       refreshToken,
     };
-  } catch {
-    throw new Error("Internal server Error");
+  } catch (err) {
+    if (err instanceof ApiError) {
+      throw err;
+    }
+
+    throw new ApiError(500, "Internal server Error");
   }
 };
 
@@ -118,7 +118,7 @@ export const registerSalonService = async (
 };  
 
 export const rotateRefreshTokenService = async (refreshToken: string) => {
-  try {
+  
     // verify token signature first
     const decoded = verifyToken(refreshToken, "refresh") as any;
     console.log("Decoded refresh token payload:", decoded);
@@ -127,7 +127,7 @@ export const rotateRefreshTokenService = async (refreshToken: string) => {
       console.log("Existing refresh token record from DB:", existing);
     if (!existing) {
       console.error("Refresh token not found in DB", { phone, token: refreshToken });
-      throw new Error("Invalid or revoked refresh token");
+      throw new ApiError(401, "Invalid or revoked refresh token");
     }
 
     // revoke existing
@@ -139,7 +139,6 @@ export const rotateRefreshTokenService = async (refreshToken: string) => {
     await saveRefreshTokenRepository(existing.phone, newRefreshToken, refreshExpiresAt);
 
     return { accessToken, refreshToken: newRefreshToken, payload: decoded };
-  } catch (err) {
-    throw err;
-  }
+
+  
 };

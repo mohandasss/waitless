@@ -1,4 +1,4 @@
-import type { Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import {
   registerSalonService,
   sendOtpService,
@@ -84,7 +84,7 @@ export const registerSalonController = async (req: Request, res: Response) => {
 };
 
 //refreshing token
-export const refreshTokenController = async (req: Request, res: Response) => {
+export const refreshTokenController = async (req: Request, res: Response , next: NextFunction) => {
   try {
     const refreshToken = req.cookies?.refreshToken;
     console.log("Received refresh token request with token:", refreshToken);
@@ -101,7 +101,6 @@ export const refreshTokenController = async (req: Request, res: Response) => {
       accessToken: result.accessToken,
     });
   } catch (err) {
-    console.error("Refresh token error", err);
-    return apiResponse(res, 401, "Invalid refresh token", false);
+    next(err);
   }
 };

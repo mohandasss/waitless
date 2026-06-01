@@ -1,22 +1,21 @@
-// middleware/globalErrorHandler.ts
-
 import type { Request, Response, NextFunction } from "express";
-import { apiResponse } from "./apiResponse.js";
+import { apiResponse } from "../utils/apiResponse.js";
+import { ApiError } from "../utils/ApiError.js";
 
 export const globalErrorHandler = (
-  err: any,
+  err: Error,
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
-  console.log(err);
+  console.error(err);
 
-  if (err) {
+  if (err instanceof ApiError) {
     return apiResponse(
       res,
-      err.statusCode || 500,
+      err.statusCode,
       err.message,
-      false
+      false,
     );
   }
 
@@ -24,6 +23,6 @@ export const globalErrorHandler = (
     res,
     500,
     "Internal Server Error",
-    false
+    false,
   );
 };
