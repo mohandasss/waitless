@@ -4,12 +4,12 @@ import {
   sendOtpService,
   verifyOtpService,
   rotateRefreshTokenService,
-} from "../services/auth.service.js";
-import { apiResponse } from "../utils/apiResponse.js";
+} from "../../services/auth.service.js";
+import { apiResponse } from "../../utils/apiResponse.js";
 import {
   setAccessTokenCookie,
   setRefreshTokenCookie,
-} from "../utils/cookies.js";
+} from "../../utils/cookies.js";
 
 //sending otp to user
 export const sendOtpController = async (req: Request, res: Response) => {

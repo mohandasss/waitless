@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { registerSalonController, sendOtpController, verifyOtpController, refreshTokenController } from '../controllers/auth.controller.js';
+import { registerSalonController, sendOtpController, verifyOtpController, refreshTokenController } from '../controllers/auth/auth.controller.js';
 import { RegisterSaloonRequest, validateSendOtpRequest, validateVerifyOtpRequest } from '../middlewares/auth.middleware.js';
 import { otpRateLimiter } from '../utils/ratelimiter.js';
   import { upload , uploadToCloudinary } from '../utils/imageUploadUtil.js';

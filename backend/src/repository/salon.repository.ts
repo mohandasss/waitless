@@ -38,5 +38,5 @@ export const GetSalonDetailsRepository = async (id: number) => {
     },
   });
 
-  return record;
+  return record;``
 };

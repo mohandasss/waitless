@@ -93,15 +93,6 @@ model PendingSalon {
   createdAt   DateTime @default(now())
 }
 
-// Booking
-// --------
-// id
-// userId
-// salonId
-// serviceId
-// bookingTime
-// status
-// createdAt
 
 
 model Booking {

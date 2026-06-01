@@ -1,9 +1,14 @@
 import type { NextFunction, Request, Response } from "express";
-import { apiResponse } from "../utils/apiResponse.js";
+import { apiResponse } from "../../utils/apiResponse.js";
 import {
   GetAllSalonService,
   GetSalonDetailsService,
-} from "../services/salon.service.js";
+} from "../../services/salon.service.js";
+
+
+
+
+// Controller for fetching all salons with pagination and search
 export const GetSalonController = async (
   req: Request,
   res: Response,
@@ -39,6 +44,16 @@ export const GetSalonController = async (
   }
 };
 
+
+
+
+
+
+
+
+
+
+// Controller for fetching details of a specific salon by ID
 export const GetSalonDetailsController = async (
   req: Request,
   res: Response,

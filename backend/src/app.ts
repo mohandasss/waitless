@@ -6,10 +6,11 @@ import { apiResponse } from "./utils/apiResponse.js";
 import cookieParser from "cookie-parser";
 import salonRoutes from "./routes/salon.routes.js";
 import { globalErrorHandler } from "./utils/globalErrorHandler.js";
+import queueRoutes from "./routes/queue.routes.js";
 dotenv.config();
 
-const app = express();
-app.use(express.json());
+const app = express();        
+app.use(express.json());      
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
@@ -27,6 +28,7 @@ app.get("/", (req, res) => {
 // Auth routes
 app.use("/auth", authRoutes);
 app.use("/salon", salonRoutes);
+app.use("/queue", queueRoutes);
 
 app.use(globalErrorHandler);
 
