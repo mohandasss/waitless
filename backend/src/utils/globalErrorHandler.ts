@@ -15,9 +15,12 @@ export const globalErrorHandler = (
       res,
       err.statusCode,
       err.message,
-      false,
+      false,  
     );
   }
+
+
+  
 
   return apiResponse(
     res,

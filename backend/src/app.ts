@@ -7,6 +7,8 @@ import cookieParser from "cookie-parser";
 import salonRoutes from "./routes/salon.routes.js";
 import { globalErrorHandler } from "./utils/globalErrorHandler.js";
 import queueRoutes from "./routes/queue.routes.js";
+import analyticsRoutes from "./routes/analytics.routes.js";
+import aiRouter from "./routes/ai.routes.js";
 dotenv.config();
 
 const app = express();        
@@ -29,6 +31,8 @@ app.get("/", (req, res) => {
 app.use("/auth", authRoutes);
 app.use("/salon", salonRoutes);
 app.use("/queue", queueRoutes);
+app.use("/ai", aiRouter);
+app.use("/analytics", analyticsRoutes);
 
 app.use(globalErrorHandler);
 
