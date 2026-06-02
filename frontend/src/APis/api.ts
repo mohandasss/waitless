@@ -1,53 +1,49 @@
 import { apiAgent, type HttpResponse } from "./AxiosWrapper";
-import type { SendOtpData, SendOtpRequest, VerifyOtpData, VerifyOtpRequest } from "./Types";
+import type {
+  AiInsightsData,
+  SendOtpData,
+  SendOtpRequest,
+  VerifyOtpData,
+  VerifyOtpRequest,
+} from "./Types";
 
 export type { AuthMethod } from "./Types";
 
 class Api {
-	async sendOtp(payload: SendOtpRequest): Promise<SendOtpData | null> {
-		const response = await apiAgent
-			.path("/auth/send-otp")
-			.method("POST")
-			.json(payload)
-			.execute<SendOtpData>();
-		return response.data;
-	}
+  async sendOtp(payload: SendOtpRequest): Promise<SendOtpData | null> {
+    const response = await apiAgent
+      .path("/auth/send-otp")
+      .method("POST")
+      .json(payload)
+      .execute<SendOtpData>();
+    return response.data;
+  }
 
-	async sendOtpWithStatus(payload: SendOtpRequest): Promise<HttpResponse<SendOtpData>> {
-		return apiAgent
-			.path("/auth/send-otp")
-			.method("POST")
-			.json(payload)
-			.execute<SendOtpData>();
-	}
+  async sendOtpWithStatus(
+    payload: SendOtpRequest,
+  ): Promise<HttpResponse<SendOtpData>> {
+    return apiAgent
+      .path("/auth/send-otp")
+      .method("POST")
+      .json(payload)
+      .execute<SendOtpData>();
+  }
 
-	async verifyOtpWithStatus(payload: VerifyOtpRequest): Promise<HttpResponse<VerifyOtpData>> {
-		return apiAgent
-			.path("/auth/verify-otp")
-			.method("POST")
-			.json(payload)
-			.execute<VerifyOtpData>();
-	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  async verifyOtpWithStatus(
+    payload: VerifyOtpRequest,
+  ): Promise<HttpResponse<VerifyOtpData>> {
+    return apiAgent
+      .path("/auth/verify-otp")
+      .method("POST")
+      .json(payload)
+      .execute<VerifyOtpData>();
+  }
+  async AiInsights(salonId: string): Promise<HttpResponse<AiInsightsData>> {
+    return apiAgent
+      .path(`/ai/insights/${salonId}`)
+      .method("GET")
+      .execute<AiInsightsData>();
+  }
 }
 
 export const api = new Api();

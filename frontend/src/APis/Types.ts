@@ -32,3 +32,11 @@ export type VerifyOtpRequest = {
   method: AuthMethod;
   otp: string;
 };
+
+
+
+export type AiInsightsData = {
+  summary: string;
+  recommendation: string;
+  growthOpportunity: string;
+};

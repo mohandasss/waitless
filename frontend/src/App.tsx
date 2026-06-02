@@ -3,6 +3,7 @@ import SalonLogin from "@/pages/SalonLogin";
 import SalonDashboard from "@/pages/SalonDashboard";
 import Discover from "@/pages/Discover";
 import QueueTracker from "@/pages/QueueTracker";
+import AiInsights from "@/pages/AiInsights";
 import { NotificationContainer } from "@/components/common/NotificationContainer";
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
         <Route path="/dashboard" element={<SalonDashboard />} />
         <Route path="/discover" element={<Discover />} />
         <Route path="/queue/:id?" element={<QueueTracker />} />
+        <Route path="/ai-insights" element={<AiInsights />} />
       </Routes>
       <NotificationContainer />
     </BrowserRouter>
