@@ -9,6 +9,7 @@ import { globalErrorHandler } from "./utils/globalErrorHandler.js";
 import queueRoutes from "./routes/queue.routes.js";
 import analyticsRoutes from "./routes/analytics.routes.js";
 import aiRouter from "./routes/ai.routes.js";
+import serviceRoutes from "./routes/service.routes.js";
 dotenv.config();
 
 const app = express();        
@@ -32,7 +33,7 @@ app.use("/auth", authRoutes);
 app.use("/salon", salonRoutes);
 app.use("/queue", queueRoutes);
 app.use("/ai", aiRouter);
-app.use("/analytics", analyticsRoutes);
+app.use("/service", serviceRoutes);
 
 app.use(globalErrorHandler);
 

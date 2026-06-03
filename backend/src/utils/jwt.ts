@@ -2,7 +2,7 @@ import jwt, { type JwtPayload } from "jsonwebtoken";
 
 export const signTokens = (payload: { id: string | number; phone: string }) => {
   const accessToken = jwt.sign(payload, process.env.JWT_SECRET!, {
-    expiresIn: "15m",
+    expiresIn: "50m",
   });
   const refreshToken = jwt.sign(payload, process.env.JWT_SECRET!, {
     expiresIn: "7d",
