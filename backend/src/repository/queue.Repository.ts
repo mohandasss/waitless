@@ -8,12 +8,20 @@ export const BookSalonTokenRepository = async (
   serviceId: number,
   userId: number,
 ) => {
+  // Generate next token number per salon+service
+  const agg = await prisma.queue.aggregate({
+    _max: { tokenNumber: true },
+    where: { salonId, serviceId },
+  });
+
+  const nextToken = (agg._max.tokenNumber ?? 0) + 1;
+
   const response = await prisma.queue.create({
     data: {
       userId: userId,
       salonId: salonId,
       serviceId: serviceId,
-      tokenNumber: 10,
+      tokenNumber: nextToken,
       status: "Booked",
     },
   });
@@ -25,6 +33,8 @@ export const BookSalonTokenRepository = async (
   return response;
 };
 
+
+
 export const GetTotalSalonBookingRepository = async (
   salonId: number,
   serviceId: number,
@@ -33,19 +43,26 @@ export const GetTotalSalonBookingRepository = async (
   pageSize: number,
 ) => {
   const { skip, take } = getPagination(pageNumber, pageSize);
+  // Build filtered `where` clause so listing can be scoped to salon/service/user
+  const where: any = { salonId };
+  if (typeof serviceId === "number" && !Number.isNaN(serviceId)) {
+    where.serviceId = serviceId;
+  }
+  if (typeof userId === "number" && !Number.isNaN(userId)) {
+    where.userId = userId;
+  }
+
   const response = await prisma.queue.findMany({
     skip,
     take,
-    where: {
-      salonId,
-    },
+    where,
     include: {
       user: true,
       service: true,
     },
   });
 
-  const totalRecords = await prisma.queue.count();
+  const totalRecords = await prisma.queue.count({ where });
 
   return buildPaginationResponse(response, pageNumber, pageSize, totalRecords);
 };

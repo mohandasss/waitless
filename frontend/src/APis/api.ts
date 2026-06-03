@@ -44,6 +44,62 @@ class Api {
       .method("GET")
       .execute<AiInsightsData>();
   }
+
+  
+
+  async getSalons(pageNumber = 1, pageSize = 10, search = "") {
+    return apiAgent
+      .path(`/salon/salons`)
+      .method("GET")
+      .query({ pageNumber, pageSize, search })
+      .execute();
+  }
+
+  async getSalonDetails(id: string) {
+    return apiAgent.path(`/salon/salon/${id}`)
+    .method("GET")
+    .execute();
+  }
+
+  async getServices(salonId: string, pageNumber = 1, pageSize = 50) {
+    return apiAgent
+      .path(`/service/salon/${salonId}/services`)
+      .method("GET")
+      .query({ pageNumber, pageSize })
+      .execute();
+  }
+
+  async addService(salonId: string, payload: { name: string; duration: number; price?: number }) {
+    return apiAgent
+      .path(`/service/salon/${salonId}/services`)
+      .method("POST")
+      .json(payload)
+      .execute();
+  }
+
+  async bookSlot(salonId: string, payload: { serviceId: number }) {
+    return apiAgent
+      .path(`/queue/salon/${salonId}/book-slot`)
+      .method("POST")
+      .json(payload)
+      .execute();
+  }
+
+  async getBookings(salonId: string, opts?: { serviceId?: number; pageNumber?: number; pageSize?: number }) {
+    const { serviceId, pageNumber = 1, pageSize = 10 } = opts || {};
+    return apiAgent
+      .path(`/queue/salon/${salonId}/book-list`)
+      .method("GET")
+      .query({ serviceId, pageNumber, pageSize })
+      .execute();
+  }
+
+  async getTodayAnalytics(salonId: string) {
+    return apiAgent
+      .path(`/analytics/today/${salonId}`)
+      .method("GET")
+      .execute<import("./Types").TodayAnalyticsData>();
+  }
 }
 
 export const api = new Api();

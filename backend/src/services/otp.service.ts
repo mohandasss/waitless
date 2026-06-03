@@ -12,7 +12,7 @@ export const generateAndSendOtpService = async (
 ) => {
   console.log("Generating and sending OTP for phone:", phone, "method:", method);
   try {
-    const otp = isTwilioOtpEnabled ? generateOtp() : "1234";
+    const otp = isTwilioOtpEnabled ? generateOtp() : "123456";
 
     const otpToStore = isTwilioOtpEnabled
       ? await bcrypt.hash(otp, 10)

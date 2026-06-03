@@ -4,8 +4,8 @@ import { BookSalonTokenController, BookSalonTokenListController } from "../contr
   const router   =    Router()
 
 
-router.get("/salon/:salonId/book-slot" , validateToken, BookSalonTokenController );
-  router.get("/salon/:salonId/book-list" , validateToken, BookSalonTokenListController );
+router.post("/salon/:salonId/book-slot" , validateToken, BookSalonTokenController );
+router.get("/salon/:salonId/book-list" , validateToken, BookSalonTokenListController );
 
 
 

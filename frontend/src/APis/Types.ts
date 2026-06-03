@@ -40,3 +40,11 @@ export type AiInsightsData = {
   recommendation: string;
   growthOpportunity: string;
 };
+
+export type TodayAnalyticsData = {
+  customersServed: number;
+  revenue: number;
+  topService: string;
+  peakHour: string;
+  status?: string;
+};

@@ -5,7 +5,10 @@ import {
   type Response,
 } from "express";
 import { apiResponse } from "../../utils/apiResponse.js";
-import { BookSalonTokenService, GetTotalSalonBookingService } from "../../services/queue.service.js";
+import {
+  BookSalonTokenService,
+  GetTotalSalonBookingService,
+} from "../../services/queue.service.js";
 
 export const BookSalonTokenController = async (
   req: Request,
@@ -15,9 +18,12 @@ export const BookSalonTokenController = async (
   const { salonId } = req.params;
   const { serviceId } = req.body;
   const userId = (req.user as { id?: number | string })?.id;
-
   if (!userId) {
     return apiResponse(res, 401, "Unauthorized", false, null);
+  }
+
+  if (!serviceId) {
+    return apiResponse(res, 400, "serviceId is required", false, null);
   }
   try {
     const response = await BookSalonTokenService(
@@ -31,15 +37,14 @@ export const BookSalonTokenController = async (
   }
 };
 
-
-
-
-export const BookSalonTokenListController = async (req: Request, res: Response, next: NextFunction) => {
-
+export const BookSalonTokenListController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const { salonId } = req.params;
-  const {pageNumber = 1 ,pageSize = 5 } = req.query
+  const { pageNumber = 1, pageSize = 5, serviceId } = req.query;
   const userId = (req.user as { id?: number | string })?.id;
-  const {serviceId} = req.body
   if (!userId) {
     return apiResponse(res, 401, "Unauthorized", false, null);
   }
@@ -49,13 +54,16 @@ export const BookSalonTokenListController = async (req: Request, res: Response, 
       Number(serviceId),
       Number(userId),
       Number(pageNumber),
-      Number(pageSize)
+      Number(pageSize),
     );
-    return apiResponse(res, 200, "All queue items fetched successfully", true, response);
+    return apiResponse(
+      res,
+      200,
+      "All queue items fetched successfully",
+      true,
+      response,
+    );
   } catch (error) {
     next(error);
   }
-
-
-
-}
+};

@@ -37,7 +37,8 @@ export default function SalonDashboard() {
         <DashboardStatus />
         <NowServingCard />
         <ActionGrid />
-        <QueueList />
+        {/* TODO: replace '1' with real salonId from auth/context */}
+        <QueueList salonId={"28"} />
       </main>
 
       <BottomNav />

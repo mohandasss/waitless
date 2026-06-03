@@ -12,8 +12,8 @@ import aiRouter from "./routes/ai.routes.js";
 import serviceRoutes from "./routes/service.routes.js";
 dotenv.config();
 
-const app = express();        
-app.use(express.json());      
+const app = express();
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
@@ -32,6 +32,7 @@ app.get("/", (req, res) => {
 app.use("/auth", authRoutes);
 app.use("/salon", salonRoutes);
 app.use("/queue", queueRoutes);
+app.use("/analytics", analyticsRoutes);
 app.use("/ai", aiRouter);
 app.use("/service", serviceRoutes);
 

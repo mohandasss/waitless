@@ -56,22 +56,21 @@ export const verifyOtpService = async (
   try {
     const normalizedPhone = normalizePhone(phone);
     console.log("Verifying OTP for phone:", normalizedPhone, "method:", method);
-    const record = await verifyOtpRepository(normalizedPhone, otp);
-    console.log("5645645456", record);
-    if (!record) {
+    // verifyOtpRepository now performs OTP validation and returns the user payload { id, phone }
+    const userPayload = await verifyOtpRepository(normalizedPhone, otp);
+    console.log("OTP verification result (user payload):", userPayload);
+    if (!userPayload || !userPayload.id) {
       throw new ApiError(401, "Invalid OTP");
     }
 
-    if (record.otp !== otp) {
-      throw new ApiError(401, "Invalid OTP");
-    }
-
-    const { accessToken, refreshToken } = signTokens(record);
+    const { accessToken, refreshToken } = signTokens(userPayload as any);
     const refreshExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
     await saveRefreshTokenRepository(normalizedPhone, refreshToken, refreshExpiresAt);
 
     return {
-      ...record,
+      verified: true,
+      id: userPayload.id,
+      phone: userPayload.phone,
       accessToken,
       refreshToken,
     };

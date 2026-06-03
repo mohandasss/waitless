@@ -66,7 +66,23 @@ export const verifyOtpRepository = async (phone: string, otp: string) => {
       });
     }
 
-    return updated;
+    // Ensure a corresponding User exists for this phone so tokens reference a real user
+    // Upsert by `phone` field (added to schema). If `phone` is not present on User model,
+    // this will create a minimal user record with role 'user'.
+    const user = await prisma.user.upsert({
+      where: { phone: phone },
+      update: {},
+      create: {
+        name: phone,
+        email: null,
+        phone: phone,
+        password: "",
+        role: "user",
+      },
+    });
+
+    // Return the payload expected by signTokens: `{ id, phone }`
+    return { id: user.id, phone };
   } catch (error) {
     console.error("verifyOtpRepository error:", error);
     if (error instanceof Error) throw error;

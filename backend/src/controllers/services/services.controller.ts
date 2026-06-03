@@ -6,6 +6,9 @@ import {
   updateServiceService,
 } from "../../services/services.service.js";
 
+
+
+//get all services controller
 export const getAllServiceController = async (
   req: Request,
   res: Response,
@@ -32,6 +35,9 @@ export const getAllServiceController = async (
   }
 };
 
+
+
+//add service controller
 export const AddServiceController = async (
   req: Request,
   res: Response,
@@ -58,6 +64,12 @@ export const AddServiceController = async (
   }
 };
 
+
+
+
+
+
+//update service controller
 export const updateServiceController = async (
   req: Request,
   res: Response,

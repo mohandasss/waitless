@@ -38,9 +38,6 @@ export const upload = multer({
   },
 });
 
-/* ---------------------------------- */
-/* Helper Function                    */
-/* ---------------------------------- */
 
 const uploadImage = (
   buffer: Buffer
@@ -73,9 +70,6 @@ const uploadImage = (
   });
 };
 
-/* ---------------------------------- */
-/* Middleware                         */
-/* ---------------------------------- */
 
 export const uploadToCloudinary = async (
   req: Request,
