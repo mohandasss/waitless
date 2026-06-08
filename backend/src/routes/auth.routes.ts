@@ -14,9 +14,6 @@ import { otpRateLimiter } from "../utils/ratelimiter.js";
 import { upload, uploadToCloudinary } from "../utils/imageUploadUtil.js";
 const router = Router();
 
-// POST /auth/send-otp
-// router.post('/send-otp',  validateSendOtpRequest, otpRateLimiter, sendOtpController);
-
 router.post(
   "/register",
   upload.single("imageUrl"),

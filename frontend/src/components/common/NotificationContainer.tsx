@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNotificationStore, NotificationType, Notification } from '@/store/useNotificationStore';
 import { CheckCircle, XCircle, AlertCircle, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -18,9 +18,9 @@ const bgColors: Record<NotificationType, string> = {
 };
 
 const NotificationItem: React.FC<{ notification: Notification }> = ({ notification }) => {
-  const [isExiting, setIsExiting] = React.useState(false);
+  const [isExiting, setIsExiting] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const duration = notification.duration || 3000;
     const exitDelay = Math.max(0, duration - 300);
 

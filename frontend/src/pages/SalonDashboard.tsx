@@ -11,23 +11,23 @@ import { ErrorState } from "@/components/common/ErrorState";
 export default function SalonDashboard() {
   const [status, setStatus] = useState<"loading" | "error" | "success">("loading");
 
-  useEffect(() => {
-    document.title = "Luxe Studio Dashboard - QueueCut";
-    // Simulate loading state
-    const timer = setTimeout(() => {
-      setStatus("success");
-    }, 1000);
+  // useEffect(() => {
+  //   document.title = "Luxe Studio Dashboard - QueueCut";
+  //   // Simulate loading state
+  //   const timer = setTimeout(() => {
+  //     setStatus("success");
+  //   }, 1000);
 
-    return () => clearTimeout(timer);
-  }, []);
+  //   return () => clearTimeout(timer);
+  // }, []);
 
-  if (status === "loading") {
-    return <LoadingState message="Loading dashboard..." fullscreen />;
-  }
+  // if (status === "loading") {
+  //   return <LoadingState message="Loading dashboard..." fullscreen />;
+  // }
 
-  if (status === "error") {
-    return <ErrorState message="Failed to load dashboard" onRetry={() => setStatus("loading")} />;
-  }
+  // if (status === "error") {
+  //   return <ErrorState message="Failed to load dashboard" onRetry={() => setStatus("loading")} />;
+  // }
 
   return (
     <div className="bg-background text-on-background antialiased min-h-screen pb-32">
