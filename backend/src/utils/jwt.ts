@@ -11,7 +11,7 @@ export const signTokens = (payload: { id: string | number; phone: string }) => {
   return { accessToken, refreshToken };
 };
 
-export const verifyToken = (token: string, type: "access" | "refresh") => {
+export const verifyToken = (token: string) => {
   try {
     const secret = process.env.JWT_SECRET!;
     const decoded = jwt.verify(token, secret) as JwtPayload | string;

@@ -39,6 +39,11 @@ export const upload = multer({
 });
 
 
+
+
+
+
+
 const uploadImage = (
   buffer: Buffer
 ): Promise<string> => {
@@ -103,3 +108,31 @@ export const uploadToCloudinary = async (
   }
 };
 
+
+export const uploadPdf = (
+  buffer: Buffer
+): Promise<string> => {
+  console.log("dsdsdsd" , buffer)
+  return new Promise((resolve, reject) => {
+    const stream =
+      cloudinary.uploader.upload_stream(
+        {
+          folder: "prescriptions",
+          resource_type: "raw",
+          public_id:
+        `prescription-${Date.now()}.pdf`
+        },
+        (error, result) => {
+          if (error) return reject(error);
+          if (!result)
+            return reject(
+              new Error("Upload failed")
+            );
+
+          resolve(result.secure_url);
+        }
+      );
+
+    stream.end(buffer);
+  });
+};

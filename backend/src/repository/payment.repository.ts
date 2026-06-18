@@ -1,0 +1,49 @@
+import { prisma } from "../utils/prisma.js"
+
+interface SavePaymentPayload {
+  orderId: string;
+  amount: number;
+  currency: string;
+  status: string;
+  userId: number;
+  bookingId?: number;
+  paymentId?: string;
+  signature?: string;
+}
+
+
+
+
+export const SavePaymentRepository = async (payload: SavePaymentPayload) => {
+
+  const { orderId, amount, currency, status, userId } = payload
+
+  const findPayment = await prisma.payment.create({
+    data: {
+      razorpayOrderId: orderId,
+      status,
+      amount,
+      userId,
+
+    }
+  })
+  return findPayment
+
+}
+
+
+
+export const paymentVerifyRepository = async (razorpay_order_id: string, razorpay_payment_id: string, razorpay_signature: string) => {
+  const update = await prisma.payment.update({
+    where: {
+      razorpayOrderId: razorpay_order_id
+    },
+    data: {
+      razorpayPaymentId: razorpay_payment_id,
+      razorpaySignature: razorpay_signature,
+      status: "SUCCESS",
+    }
+  })
+
+  return update
+}

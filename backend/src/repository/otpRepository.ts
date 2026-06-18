@@ -18,6 +18,9 @@ export const saveOtp = async (phone: string, otp: string) => {
   });
 };
 
+
+
+
 export const verifyOtpRepository = async (phone: string, otp: string) => {
   console.log("Verifying OTP for phone:", phone, "otp:", otp);
   try {
@@ -31,10 +34,7 @@ export const verifyOtpRepository = async (phone: string, otp: string) => {
       throw new Error("no otp record for this phone");
     }
 
-    // if (otpRecord.verified) {
-    //   throw new Error("otp already verified");
-    // }
-
+  
     if (otpRecord.otp !== otp) {
       throw new Error("invalid otp");
     }
@@ -42,6 +42,7 @@ export const verifyOtpRepository = async (phone: string, otp: string) => {
     if (otpRecord.expiresAt <= new Date()) {
       throw new Error("otp expired");
     }
+    
 
     const updated = await prisma.otpVerification.update({
       where: { id: otpRecord.id },
@@ -66,9 +67,7 @@ export const verifyOtpRepository = async (phone: string, otp: string) => {
       });
     }
 
-    // Ensure a corresponding User exists for this phone so tokens reference a real user
-    // Upsert by `phone` field (added to schema). If `phone` is not present on User model,
-    // this will create a minimal user record with role 'user'.
+    
     const user = await prisma.user.upsert({
       where: { phone: phone },
       update: {},
@@ -76,13 +75,15 @@ export const verifyOtpRepository = async (phone: string, otp: string) => {
         name: phone,
         email: null,
         phone: phone,
-        password: "",
+        password: "",                                             
         role: "user",
       },
     });
 
+
+
     // Return the payload expected by signTokens: `{ id, phone }`
-    return { id: user.id, phone };
+    return { id: user.id, phone };``
   } catch (error) {
     console.error("verifyOtpRepository error:", error);
     if (error instanceof Error) throw error;

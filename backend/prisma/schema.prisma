@@ -109,3 +109,21 @@ model Booking {
   salon   Salon   @relation(fields: [salonId], references: [id])
   service Service @relation(fields: [serviceId], references: [id])
 }
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+model Payment {
+  id             Int      @id @default(autoincrement())
+  razorpayOrderId String   @unique
+  razorpayPaymentId String?
+  razorpaySignature String?
+  amount         Float
+  status         PaymentStatus @default(PENDING)
+  userId         Int
+  bookingId      Int?
+  createdAt      DateTime @default(now())
+}

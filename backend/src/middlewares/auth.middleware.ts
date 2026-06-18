@@ -5,6 +5,13 @@ import { verifyToken } from "../utils/jwt.js";
 
 export type AuthMethod = "sms" | "whatsapp";
 
+
+
+export type RequestUser = {
+  id: number;
+  phone: string;
+}
+
 export const validateSendOtpRequest = (
   req: Request,
   res: Response,
@@ -103,29 +110,30 @@ export const validateToken = (
   req: Request,
   res: Response,
   next: NextFunction,
-) => {
+): void => {
   const accessToken = req.cookies?.accessToken;
-  console.log("Received accessToken from cookies:", accessToken);
+
   if (!accessToken) {
-    return apiResponse(
+    apiResponse(
       res,
       401,
       "Unauthorized: No token provided",
       false,
       null,
     );
+    return;
   }
 
   try {
-    console.log("accessToken:", accessToken);
-    const decoded = verifyToken(accessToken, "access");
-    console.log("Decoded token:", decoded);
-    //@ts-ignore
-    req.user = decoded; // Attach user info to request object
-    // throw new Error("Testing global error handler");
+    const decoded = verifyToken(
+      accessToken,
+      "access"
+    ) as RequestUser;
+
+    req.user = decoded;
+
     next();
-  } catch (error: any) {
+  } catch (error) {
     next(error);
   }
-  // console.log("validateToken middleware called" ,req);
 };

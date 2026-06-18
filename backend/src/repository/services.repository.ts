@@ -23,6 +23,13 @@ export const getAllServicesRepository = async (
   return buildPaginationResponse(services, pageNumber, pageSize, totalRecords);
 };
 
+  
+
+
+
+
+
+
 export const AddServiceRepository = async (
   salonId: number,
   name: string,
