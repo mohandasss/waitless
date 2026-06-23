@@ -3,7 +3,7 @@ import type { Response } from "express";
 export const apiResponse = (
   res: Response,
   statusCode: number,
-  message: string,
+  message: any,
   success: boolean,
   data?: any
 ) => {

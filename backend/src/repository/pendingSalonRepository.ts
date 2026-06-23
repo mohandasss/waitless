@@ -6,6 +6,7 @@ export const savePendingSalonRepository = async (
   address: string,
   phone: string,
   imageUrl?: string,
+  role?: string,
 ) => {
   try {
     return await prisma.pendingSalon.upsert({
@@ -17,6 +18,7 @@ export const savePendingSalonRepository = async (
         saloon_name: salon_name,
         address,
         ...(imageUrl ? { imageUrl } : {}),
+        ...(role ? { role } : {}),
       },
       create: {
         name,
@@ -24,6 +26,7 @@ export const savePendingSalonRepository = async (
         address,
         phone,
         imageUrl: imageUrl ?? null,
+        role: role ?? "admin",
       },
     });
   } catch (error) {

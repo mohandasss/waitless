@@ -6,18 +6,19 @@ import {
   refreshTokenController,
 } from "../controllers/auth/auth.controller.js";
 import {
-  RegisterSaloonRequest,
+  validate,
   validateSendOtpRequest,
   validateVerifyOtpRequest,
 } from "../middlewares/auth.middleware.js";
 import { otpRateLimiter } from "../utils/ratelimiter.js";
 import { upload, uploadToCloudinary } from "../utils/imageUploadUtil.js";
+import { registerSalonSchema } from "../validations/RegisterValidation.js";
 const router = Router();
 
 router.post(
   "/register",
   upload.single("imageUrl"),
-  RegisterSaloonRequest,
+  validate(registerSalonSchema),
   uploadToCloudinary,
   registerSalonController,
 );

@@ -58,6 +58,7 @@ export const verifyOtpService = async (
     console.log("Verifying OTP for phone:", normalizedPhone, "method:", method);
     // verifyOtpRepository now performs OTP validation and returns the user payload { id, phone }
     const userPayload = await verifyOtpRepository(normalizedPhone, otp);
+    console.log("userpaykload==>" , userPayload)
     console.log("OTP verification result (user payload):", userPayload);
     if (!userPayload || !userPayload.id) {
       throw new ApiError(401, "Invalid OTP");
@@ -71,6 +72,7 @@ export const verifyOtpService = async (
       verified: true,
       id: userPayload.id,
       phone: userPayload.phone,
+      role: userPayload.role,
       accessToken,
       refreshToken,
     };
@@ -91,6 +93,7 @@ export const registerSalonService = async (
   address: string,
   phone: string,
   imageUrl?: string,
+  role?: string,
 ) => {
   const normalizedPhone = normalizePhone(phone);
   console.log("OTP sent successfully to", normalizedPhone);
@@ -108,18 +111,19 @@ export const registerSalonService = async (
       address,
       normalizedPhone,
       imageUrl,
+      role,
     );
   } catch {
     throw new Error("Failed to register salon. Please try again later.");
   }
 
-  return { phone: normalizedPhone, method: "sms" as const , name, salon_name, address, imageUrl };
+  return { phone: normalizedPhone, method: "sms" as const , name, salon_name, address, imageUrl, role };
 };  
 
 export const rotateRefreshTokenService = async (refreshToken: string) => {
   
     // verify token signature first
-    const decoded = verifyToken(refreshToken, "refresh") as any;
+    const decoded = verifyToken(refreshToken) as any;
     console.log("Decoded refresh token payload:", decoded);
     const phone = decoded?.phone;
     const existing = await findRefreshTokenRepository(refreshToken, phone);

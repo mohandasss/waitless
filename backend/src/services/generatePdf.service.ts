@@ -10,8 +10,7 @@ export const generatePdfService = async () => {
 
     try {
         const pdfGenerated = await pdfGenerator(response)
-        const testBuffer = Buffer.from("hello");
-        console.log("testBuffer", testBuffer)
+        console.log("pdfGenerated", pdfGenerated)
         const uploadPDFResult = await uploadPdf(pdfGenerated)
         console.log(uploadPDFResult)
         return pdfGenerated

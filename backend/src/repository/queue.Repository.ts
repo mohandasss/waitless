@@ -11,22 +11,51 @@ export const BookSalonTokenRepository = async (
   // Generate next token number per salon+service
   const agg = await prisma.queue.aggregate({
     _max: { tokenNumber: true },
-    where: { salonId, serviceId },
+    where: { salonId },
   });
 
   const nextToken = (agg._max.tokenNumber ?? 0) + 1;
 
-  const response = await prisma.queue.create({
-    data: {
-      userId: userId,
-      salonId: salonId,
-      serviceId: serviceId,
-      tokenNumber: nextToken,
-      status: "Booked",
-    },
-  });
+  let response
+  let booked
+
+  const result = await prisma.$transaction(async (tx) => {
+
+    response = await tx.queue.create({
+      data: {
+        userId: userId,
+        salonId: salonId,
+        serviceId: serviceId,
+        tokenNumber: nextToken,
+        status: "Booked",
+      },
+    });
+
+
+    booked = await tx.booking.create({
+      data: {
+        userId: userId,
+        salonId: salonId,
+        serviceId: serviceId,
+        bookingTime: new Date(),
+        status: "PENDING",
+
+      }
+    })
+  })
+
+  console.log("response", response)
+  console.log("booked", booked)
+
+
+
+
+
+
+
   if (!response) {
     throw new ApiError(500, "Database error while booking token");
+
   }
   console.log("response", response);
 

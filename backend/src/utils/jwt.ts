@@ -1,6 +1,6 @@
 import jwt, { type JwtPayload } from "jsonwebtoken";
 
-export const signTokens = (payload: { id: string | number; phone: string }) => {
+export const signTokens = (payload: { id: string | number; phone: string ,role :string }) => {
   const accessToken = jwt.sign(payload, process.env.JWT_SECRET!, {
     expiresIn: "50m",
   });
@@ -23,6 +23,7 @@ export const verifyToken = (token: string) => {
     const payload = {
       id: decoded.id as string | number,
       phone: decoded.phone as string,
+      role: decoded.role as string,
     };
     return payload;
   } catch (error) {

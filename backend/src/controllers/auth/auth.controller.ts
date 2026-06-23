@@ -44,12 +44,13 @@ export const verifyOtpController = async (req: Request, res: Response) => {
 
 //registering salon
 export const registerSalonController = async (req: Request, res: Response) => {
-  const { name, saloon_name, address, phone } = req.body;
+  const { name, saloon_name, address, phone, role } = req.body;
   console.log("Received salon registration request:", {
     name,
     saloon_name,
     address,
     phone,
+    role,
   });
 
   const cloudinaryUrls = req.body.imageUrl;
@@ -61,6 +62,7 @@ export const registerSalonController = async (req: Request, res: Response) => {
     address,
     phone,
     cloudinaryUrls,
+    role,
   });
   try {
     const result = await registerSalonService(
@@ -69,6 +71,7 @@ export const registerSalonController = async (req: Request, res: Response) => {
       address,
       phone,
       cloudinaryUrls,
+      role,
     );
     // console.log("Saloon registration result:", result);
     return apiResponse(res, 200, "Salon registered successfully", true, result);

@@ -3,7 +3,7 @@ import { generatePdfService } from "../../services/generatePdf.service.js";
 // import { apiResponse } from "../../utils/apiResponse.js";
 import type { NextFunction } from "express";
 
-export const generatePdfController = async  (req: Request, res: Response,  next: NextFunction) => {
+export const generatePdfController = async (req: Request, res: Response, next: NextFunction) => {
 
 
     try {

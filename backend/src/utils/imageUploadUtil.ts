@@ -15,9 +15,6 @@ import type {
 
 dotenv.config();
 
-/* ---------------------------------- */
-/* Cloudinary Config                  */
-/* ---------------------------------- */
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_NAME!,
@@ -25,9 +22,6 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_SECRET!,
 });
 
-/* ---------------------------------- */
-/* Multer Setup                       */
-/* ---------------------------------- */
 
 const storage = multer.memoryStorage();
 
@@ -88,17 +82,17 @@ export const uploadToCloudinary = async (
       return next(new Error("No file uploaded"));
     }
 
-    const resizedBuffer = await sharp(file.buffer)
-      .resize({
-        width: 800,
-        height: 600,
-        fit: "inside",
-        withoutEnlargement: true,
-      })
-      .jpeg({ quality: 80 })
-      .toBuffer();
+    // const resizedBuffer = await sharp(file.buffer)
+    //   .resize({
+    //     width: 800,
+    //     height: 600,
+    //     fit: "inside",
+    //     withoutEnlargement: true,
+    //   })
+    //   .jpeg({ quality: 80 })
+    //   .toBuffer();
 
-    const imageUrl = await uploadImage(resizedBuffer);
+    const imageUrl = await uploadImage(file.buffer);
 
     req.body.imageUrl = imageUrl;
 
@@ -112,15 +106,15 @@ export const uploadToCloudinary = async (
 export const uploadPdf = (
   buffer: Buffer
 ): Promise<string> => {
-  console.log("dsdsdsd" , buffer)
   return new Promise((resolve, reject) => {
     const stream =
       cloudinary.uploader.upload_stream(
         {
           folder: "prescriptions",
-          resource_type: "raw",
+          resource_type: "image",
+          format: "pdf",
           public_id:
-        `prescription-${Date.now()}.pdf`
+            `prescription-${Date.now()}`
         },
         (error, result) => {
           if (error) return reject(error);

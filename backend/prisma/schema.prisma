@@ -91,6 +91,7 @@ model PendingSalon {
   address     String
   imageUrl    String?
   phone       String   @unique
+  role        String?
   createdAt   DateTime @default(now())
 }
 

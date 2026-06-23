@@ -5,7 +5,8 @@ import { ApiError } from "../utils/ApiError.js";
 import { prisma } from "../utils/prisma.js";
 
 export const createOrderService = async (amount: number, userId: string) => {
-
+  console.log("amount", amount)
+  console.log("userId", userId)
   try {
     const order = await razorpay.orders.create({
       amount: amount * 100,
@@ -28,7 +29,7 @@ export const createOrderService = async (amount: number, userId: string) => {
     }
 
 
-
+ 
     const paymentDetails = {
       orderId: order.id,
       amount: order.amount,

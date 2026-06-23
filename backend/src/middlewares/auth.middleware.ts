@@ -10,6 +10,7 @@ export type AuthMethod = "sms" | "whatsapp";
 export type RequestUser = {
   id: number;
   phone: string;
+  role: string;
 }
 
 export const validateSendOtpRequest = (
@@ -81,30 +82,24 @@ export const validateVerifyOtpRequest = (
   next();
 };
 
-export const RegisterSaloonRequest = (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  const { name, saloon_name, address, phone, imageUrl } = req.body;
+export const validate = (schema: any) => {
+  return (req: Request, res: Response, next: NextFunction) => {
 
-  if (phone.length !== 10) {
-    return apiResponse(
-      res,
-      400,
-      "Phone number must be a valid 10-digit string",
-      false,
-    );
+    const result = schema.safeParse(req.body)
+    console.log(result)
+    if (!result.success) {
+      return apiResponse(res, 400, result.error.issues[0].message, false, null)
+    }
+
+    req.body = result.data
+
+    next()
+
   }
 
-  req.body.phone = phone;
-  req.body.name = name;
-  req.body.address = address;
-  req.body.saloon_name = saloon_name;
-  req.body.imageUrl = imageUrl;
 
-  next();
-};
+
+}
 
 export const validateToken = (
   req: Request,
@@ -126,8 +121,7 @@ export const validateToken = (
 
   try {
     const decoded = verifyToken(
-      accessToken,
-      "access"
+      accessToken
     ) as RequestUser;
 
     req.user = decoded;
@@ -137,3 +131,32 @@ export const validateToken = (
     next(error);
   }
 };
+
+export const IsAdmin = (req: Request, res: Response, next: NextFunction) => {
+  console.log("running")
+  try {
+    const user = req.user;
+    console.log("dasdasdsd", user)
+    if (!user) {
+      return apiResponse(
+        res,
+        401,
+        "Unauthorized: No user found",
+        false,
+        null,
+      );
+    }
+    if (user.role !== "ADMIN") {
+      return apiResponse(
+        res,
+        403,
+        "Forbidden: Only admin can perform this action",
+        false,
+        null,
+      );
+    }
+    next();
+  } catch (error) {
+    next(error);
+  }
+}
