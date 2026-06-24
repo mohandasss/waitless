@@ -1,26 +1,21 @@
 import { pdfGenerator } from "../highCPUTASK/generatePDF.js";
-import { pdfGenerationRepository } from "../repository/pdfGeneration.repository.js";
+import { pdfGenerationRepository, savePrescriptionPdfResult } from "../repository/pdfGeneration.repository.js";
 import { upload, uploadPdf } from "../utils/imageUploadUtil.js";
 
-export const generatePdfService = async () => {
+export const generatePdfService = async (userId: number) => {
 
-
-
-    const response = await pdfGenerationRepository()
+    const data = await pdfGenerationRepository()
 
     try {
-        const pdfGenerated = await pdfGenerator(response)
+        const pdfGenerated = await pdfGenerator(data)
         console.log("pdfGenerated", pdfGenerated)
         const uploadPDFResult = await uploadPdf(pdfGenerated)
-        console.log(uploadPDFResult)
-        return pdfGenerated
+        const savedPrescription = await savePrescriptionPdfResult(userId, uploadPDFResult)
+        console.log("savedPrescription", savedPrescription)
+        return savedPrescription
     } catch (error) {
-
+        console.error(error)
         return error
     }
-
-
-
-
 
 }

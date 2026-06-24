@@ -18,6 +18,7 @@ model User {
   createdAt DateTime @default(now())
   queues   Queue[]
   bookings Booking[]
+  prescriptions Prescription[]
 }
 
 model Salon {
@@ -127,4 +128,13 @@ model Payment {
   userId         Int
   bookingId      Int?
   createdAt      DateTime @default(now())
+}
+
+model Prescription {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  pdfUrl    String
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id])
 }
