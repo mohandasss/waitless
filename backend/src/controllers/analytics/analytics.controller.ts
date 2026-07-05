@@ -8,7 +8,7 @@ export const getTodayAnalytics = async (
   next: NextFunction,
 ) => {
   try {
-    const salonId = Number(req.params.salonId);
+    const salonId = req.params.salonId;
     const response = await getTodayAnalyticsService(salonId);
 
     return apiResponse(

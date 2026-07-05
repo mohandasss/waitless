@@ -11,9 +11,9 @@ export const generatePdfController = async (req: Request, res: Response, next: N
             return apiResponse(res, 400, "userId is required", false, null)
         }
 
-        const servicePdf = await generatePdfService(Number(userId));
+        const servicePdf = await generatePdfService(userId);
 
-        return apiResponse(res,200, "Pdf Generated Successfully", true, servicePdf)
+        return apiResponse(res, 200, "Pdf Generated Successfully", true, servicePdf)
     } catch (error) {
         next(error);
     }

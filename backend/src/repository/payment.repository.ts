@@ -1,12 +1,13 @@
 import { prisma } from "../utils/prisma.js"
+import { generateId } from "../utils/miscHelpers.js";
 
 interface SavePaymentPayload {
   orderId: string;
   amount: number;
   currency: string;
   status: string;
-  userId: number;
-  bookingId?: number;
+  userId: string;
+  bookingId?: string;
   paymentId?: string;
   signature?: string;
 }
@@ -20,10 +21,11 @@ export const SavePaymentRepository = async (payload: SavePaymentPayload) => {
 
   const findPayment = await prisma.payment.create({
     data: {
+      id: String(generateId()),
       razorpayOrderId: orderId,
       status,
       amount,
-      userId,
+      userId: (userId),
 
     }
   })

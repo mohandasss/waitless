@@ -8,6 +8,7 @@ import { apiResponse } from "../../utils/apiResponse.js";
 import {
   BookSalonTokenService,
   GetTotalSalonBookingService,
+  NextQueueMemberService,
 } from "../../services/queue.service.js";
 
 export const BookSalonTokenController = async (
@@ -27,10 +28,11 @@ export const BookSalonTokenController = async (
   }
   try {
     const response = await BookSalonTokenService(
-      Number(salonId),
-      Number(serviceId),
-      Number(userId),
+      salonId,
+      serviceId,
+      userId as string,
     );
+
     return apiResponse(res, 200, "Token booked successfully", true, response);
   } catch (error) {
     next(error);
@@ -50,9 +52,9 @@ export const BookSalonTokenListController = async (
   }
   try {
     const response = await GetTotalSalonBookingService(
-      Number(salonId),
-      Number(serviceId),
-      Number(userId),
+      salonId,
+      serviceId as string,
+      userId as string,
       Number(pageNumber),
       Number(pageSize),
     );
@@ -62,6 +64,72 @@ export const BookSalonTokenListController = async (
       "All queue items fetched successfully",
       true,
       response,
+    );
+  } catch (error) {
+    next(error);
+  }
+};
+
+// export const getQueueUpdate = (req : Request , res : Response , next : NextFunction)=>{
+//   const {salonId , serviceId} = req.params
+//   const userId = req.user?.id
+//   if (!userId) {
+//     return apiResponse(res, 401, "Unauthorized", false, null);
+//   }
+//   try {
+//     const response = await GetTotalSalonBookingService(
+//       salonId,
+//       serviceId,
+//       userId ,
+//     );
+//     return apiResponse(
+//       res,
+//       200,
+//       "All queue items fetched successfully",
+//       true,
+//       response,
+//     );
+//   } catch (error) {
+//     next(error);
+//   }
+
+// }
+
+
+
+
+
+export const NextQueueMemberController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const { salonId } = req.params;
+  const { tokenNumber } = req.body;
+  const userId = req.user?.id
+
+
+
+
+  if (tokenNumber === undefined) {
+    return apiResponse(res, 400, "tokenNumber is required", false, null);
+  }
+
+
+
+
+
+  try {
+    const response = await NextQueueMemberService(
+      salonId,
+      Number(tokenNumber)
+    );
+    return apiResponse(
+      res,
+      200,
+      "Queue moved to the next member successfully",
+      true,
+      response
     );
   } catch (error) {
     next(error);

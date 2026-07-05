@@ -1,10 +1,10 @@
-import { BookSalonTokenRepository, GetTotalSalonBookingRepository } from "../repository/queue.Repository.js";
+import { BookSalonTokenRepository, GetTotalSalonBookingRepository, NextQueueMemberRepository } from "../repository/queue.Repository.js";
 import { ApiError } from "../utils/ApiError.js";
 
 export const BookSalonTokenService = async (
-  salonId: number,
-  serviceId: number,
-  Userid: number,
+  salonId: string,
+  serviceId: string,
+  Userid: string,
 ) => {
   const response = await BookSalonTokenRepository(salonId, serviceId, Userid);
   return response;
@@ -12,10 +12,16 @@ export const BookSalonTokenService = async (
 
 
 
+
+
+
+
+
+
 export const GetTotalSalonBookingService = async (
-  salonId: number,
-  serviceId: number,
-  Userid: number,
+  salonId: string,
+  serviceId: string,
+  Userid: string,
   pageNumber : number,
   pageSize : number
 ) => {
@@ -25,3 +31,29 @@ export const GetTotalSalonBookingService = async (
   }
   return response;
 };
+
+
+
+
+
+
+
+
+
+
+export const NextQueueMemberService = async (
+  salonId: string,
+  tokenNumber: number
+) => {
+  const response = await NextQueueMemberRepository(salonId, tokenNumber);
+
+  return response;
+};
+
+
+
+
+
+
+
+

@@ -67,6 +67,7 @@ export const mockPrescription = {
 };
 
 import { prisma } from "../utils/prisma.js";
+import { generateId } from "../utils/miscHelpers.js";
 
 export const pdfGenerationRepository = async () => {
     return mockPrescription
@@ -75,7 +76,8 @@ export const pdfGenerationRepository = async () => {
 export const savePrescriptionPdfResult = async (userId: number, pdfUrl: string) => {
     const response = await prisma.prescription.create({
         data: {
-            userId: userId,
+            id: String(generateId()),
+            userId: String(userId),
             pdfUrl: pdfUrl,
         }
     });

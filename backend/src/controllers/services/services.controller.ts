@@ -18,7 +18,7 @@ export const getAllServiceController = async (
   const salonId = req.params.salonId;
   try {
     const services = await getAllServicesService(
-      Number(salonId),
+      salonId,
       Number(pageNumber),
       Number(pageSize),
     );
@@ -47,7 +47,7 @@ export const AddServiceController = async (
   const { name, duration, price } = req.body;
   try {
     const newService = await AddServiceService(
-      Number(salonId),
+      salonId,
       name,
       duration,
       price,
@@ -80,8 +80,8 @@ export const updateServiceController = async (
   const { name, duration, price } = req.body;
   try {
     const updatedService = await updateServiceService(
-        Number(salonId),
-      Number(serviceId),
+      salonId,
+      serviceId,
       name,
       duration,
       price,

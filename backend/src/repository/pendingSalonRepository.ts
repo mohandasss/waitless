@@ -1,4 +1,5 @@
 import { prisma } from "../utils/prisma.js";
+import { generateId } from "../utils/miscHelpers.js";
 
 export const savePendingSalonRepository = async (
   name: string,
@@ -21,6 +22,7 @@ export const savePendingSalonRepository = async (
         ...(role ? { role } : {}),
       },
       create: {
+        id: String(generateId()),
         name,
         saloon_name: salon_name,
         address,

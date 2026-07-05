@@ -1,4 +1,4 @@
-import { hashToken } from "../utils/miscHelpers.js";
+import { hashToken, generateId } from "../utils/miscHelpers.js";
 import { prisma } from "../utils/prisma.js";
 
 
@@ -23,6 +23,7 @@ export const saveRefreshTokenRepository = async (
 
     return tx.refreshToken.create({
       data: {
+        id: String(generateId()),
         phone,
         tokenHash,
         expiresAt,
@@ -50,7 +51,7 @@ export const findRefreshTokenRepository = async (token: string, phone?: string) 
   return prisma.refreshToken.findFirst({ where });
 };
 
-export const revokeRefreshTokenRepository = async (id: number) => {
+export const revokeRefreshTokenRepository = async (id: string) => {
   return prisma.refreshToken.update({
     where: { id },
     data: { revoked: true },

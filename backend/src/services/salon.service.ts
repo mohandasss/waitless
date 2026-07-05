@@ -30,7 +30,7 @@ export const GetAllSalonService = async ({
 };
 
 // DETAILS
-export const GetSalonDetailsService = async (id: number) => {
+export const GetSalonDetailsService = async (id: string) => {
   
 
 
@@ -44,7 +44,7 @@ export const GetSalonDetailsService = async (id: number) => {
 
 
 
-export const getTodayAnalyticsService = async (salonId: number) => {
+export const getTodayAnalyticsService = async (salonId: string) => {
   const [customersServed, revenue, topService, peakHour] = await Promise.all([
     getCustomersServedRepository(salonId),
     getRevenueRepository(salonId),

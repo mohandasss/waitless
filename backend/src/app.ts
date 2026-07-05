@@ -15,6 +15,7 @@ import paymentRoutes from "./routes/payment.routes.js";
 import morgan from 'morgan';
 import helmet from 'helmet'
 dotenv.config();
+import "./cron.js"
 
 const app = express();
 app.use(express.json());
@@ -43,6 +44,7 @@ app.use("/ai", aiRouter);
 app.use("/service", serviceRoutes);
 app.use("/pdf-generation", pdfGenerationRoutes);
 app.use("/payment", paymentRoutes); 
+// app.use("/polling",)
 
 
 app.use(globalErrorHandler);

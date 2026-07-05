@@ -7,7 +7,7 @@ export const getAiInsights = async (
   res: Response,
   next: NextFunction,
 ) => {
-  const salonId = Number(req.params.salonId);
+  const salonId = req.params.salonId;
 
   try {
     const response = await getAiInsightsService(salonId, next);

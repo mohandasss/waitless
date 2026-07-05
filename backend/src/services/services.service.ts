@@ -3,7 +3,7 @@ import { AddServiceRepository, getAllServicesRepository, updateServiceRepository
 import { ApiError } from "../utils/ApiError.js";
 
 export const getAllServicesService = async (
-  salonId: number,
+  salonId: string,
   pageNumber: number,
   pageSize: number,
 ) => {
@@ -19,7 +19,7 @@ export const getAllServicesService = async (
 };
 
 
-export const AddServiceService = async (salonId: number, name: string, duration: number, price: number) => {
+export const AddServiceService = async (salonId: string, name: string, duration: number, price: number) => {
 
 
     const newService =  await AddServiceRepository(salonId, name, duration, price)
@@ -30,7 +30,7 @@ export const AddServiceService = async (salonId: number, name: string, duration:
 
 }
 
-export const updateServiceService = async (salonId: number, serviceId: number, name: string, duration: number, price: number) => {
+export const updateServiceService = async (salonId: string, serviceId: string, name: string, duration: number, price: number) => {
     const updatedService = await updateServiceRepository(salonId, serviceId, name, duration, price);
     if(!updatedService){
         throw new ApiError(400, "Failed to update service")

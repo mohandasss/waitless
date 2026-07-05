@@ -1,3 +1,4 @@
+import { customAlphabet } from "nanoid";
 import type { AuthMethod } from "../middlewares/auth.middleware.js";
  import crypto from "crypto";
 export const normalizePhone = (value: unknown) => typeof value === 'string' ? value.trim() : '';
@@ -33,3 +34,10 @@ export const formatDate = (
     hour12: true,
   }).format(date);
 };
+
+
+
+ export const generateId = customAlphabet(
+  "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+  5
+);

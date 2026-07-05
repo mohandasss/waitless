@@ -4,7 +4,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { getTodayAnalyticsService } from "./salon.service.js";
 
 export const getAiInsightsService = async (
-  salonId: number,
+  salonId: string,
   next: NextFunction,
 ) => {
   const analytics = await getTodayAnalyticsService(salonId);

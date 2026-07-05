@@ -17,7 +17,7 @@ export const createOrderService = async (amount: number, userId: string) => {
 
     // return order
     const savedPayment = await SavePaymentRepository({
-      userId: Number(userId),
+      userId: userId,
       orderId: order.id,
       amount: Number(order.amount) / 100,
       currency: order.currency,

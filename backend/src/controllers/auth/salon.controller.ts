@@ -63,7 +63,7 @@ export const GetSalonDetailsController = async (
     const { id } = req.params;
     console.log("GetSalonDetailsController called with id:", id);
 
-    const response = await GetSalonDetailsService(Number(id));
+    const response = await GetSalonDetailsService(id);
     return apiResponse(
       res,
       200,

@@ -28,10 +28,10 @@ export const GetAllSalonRepository = async (
   return buildPaginationResponse(response, pageNumber, pageSize, totalRecords);
 };
 
-export const GetSalonDetailsRepository = async (id: number) => {
+export const GetSalonDetailsRepository = async (id: string) => {
   const record = await prisma.salon.findUnique({
     where: {
-      id,
+      id: String(id),
     },
     include: {
       services: true,
@@ -44,19 +44,19 @@ export const GetSalonDetailsRepository = async (id: number) => {
 
 
 
-export const getCustomersServedRepository = async (salonId: number) => {
+export const getCustomersServedRepository = async (salonId: string) => {
   return prisma.queue.count({
     where: {
-      salonId,
+      salonId:String(salonId),
       status: "Booked",
     },
   });
 };
 
-export const getRevenueRepository = async (salonId: number) => {
+export const getRevenueRepository = async (salonId: string) => {
   const completedQueues = await prisma.queue.findMany({
     where: {
-      salonId,
+      salonId:String(salonId),
       status: "Booked",
     },
     include: {
@@ -70,11 +70,11 @@ export const getRevenueRepository = async (salonId: number) => {
   );
 };
 
-export const getTopServiceRepository = async (salonId: number) => {
+export const getTopServiceRepository = async (salonId: string) => {
   const topService = await prisma.queue.groupBy({
     by: ["serviceId"],
     where: {
-      salonId,
+      salonId:String(salonId),
       status: "Booked",
     },
     _count: {
@@ -112,10 +112,10 @@ export const getTopServiceRepository = async (salonId: number) => {
 
 
 
-export const getPeakHourRepository = async (salonId: number) => {
+export const getPeakHourRepository = async (salonId: string) => {
   const completedQueues = await prisma.queue.findMany({
     where: {
-      salonId,
+      salonId:String(salonId),
       status: "Booked",
     },
     select: {

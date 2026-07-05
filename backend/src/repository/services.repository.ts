@@ -1,10 +1,11 @@
 import { ApiError } from "../utils/ApiError.js";
+import { generateId } from "../utils/miscHelpers.js";
 import { getPagination } from "../utils/getPagination.js";
 import { buildPaginationResponse } from "../utils/pagination.js";
 import { prisma } from "../utils/prisma.js";
 
 export const getAllServicesRepository = async (
-  salonId: number,
+  salonId: string,
   pageNumber: number,
   pageSize: number,
 ) => {
@@ -23,7 +24,7 @@ export const getAllServicesRepository = async (
   return buildPaginationResponse(services, pageNumber, pageSize, totalRecords);
 };
 
-  
+
 
 
 
@@ -31,7 +32,7 @@ export const getAllServicesRepository = async (
 
 
 export const AddServiceRepository = async (
-  salonId: number,
+  salonId: string,
   name: string,
   duration: number,
   price: number,
@@ -40,6 +41,7 @@ export const AddServiceRepository = async (
   try {
     return await prisma.service.create({
       data: {
+        id: NString(generateId()),
         name: normalizedName,
         duration,
         price,
@@ -57,8 +59,8 @@ export const AddServiceRepository = async (
 };
 
 export const updateServiceRepository = async (
-  salonId: number,
-  serviceId: number,
+  salonId: string,
+  serviceId: string,
   name: string,
   duration: number,
   price: number,

@@ -1,5 +1,6 @@
 import { ApiError } from "../utils/ApiError.js";
 import { prisma } from "../utils/prisma.js";
+import { generateId } from "../utils/miscHelpers.js";
 
 export const saveOtp = async (phone: string, otp: string) => {
   console.log("Saving OTP for phone:", phone);
@@ -12,6 +13,7 @@ export const saveOtp = async (phone: string, otp: string) => {
       expiresAt: new Date(Date.now() + 5 * 60 * 1000), // OTP expires in 5 minutes
     },
     create: {
+      id: String(generateId()),
       phone,
       otp,
       expiresAt: new Date(Date.now() + 5 * 60 * 1000), // OTP expires in 5 minutes
@@ -65,6 +67,7 @@ export const verifyOtpRepository = async (phone: string, otp: string) => {
         },
         update: {},
         create: {
+          id:String(generateId()),
           ownerName: pendingSalon.name,
           salonName: pendingSalon.saloon_name,
           address: pendingSalon.address,
@@ -83,6 +86,7 @@ export const verifyOtpRepository = async (phone: string, otp: string) => {
           name: pendingSalon.name,
         },
         create: {
+          id: String(generateId()),
           name: pendingSalon.name,
           email: null,
           phone: phone,
@@ -99,6 +103,7 @@ export const verifyOtpRepository = async (phone: string, otp: string) => {
         where: { phone: phone },
         update: {},
         create: {
+          id: String(generateId()),
           name: "User",
           email: null,
           phone: phone,

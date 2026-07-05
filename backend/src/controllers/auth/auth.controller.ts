@@ -10,12 +10,13 @@ import {
   setAccessTokenCookie,
   setRefreshTokenCookie,
 } from "../../utils/cookies.js";
+import logger from "../../logger.js";
 
 //sending otp to user
 export const sendOtpController = async (req: Request, res: Response) => {
   try {
     const { phone, method } = req.body;
-
+    logger.error("sending otp controller");
     const result = await sendOtpService(phone, method);
 
     return apiResponse(res, 200, "OTP sent successfully", true, result);
